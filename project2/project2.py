@@ -58,7 +58,7 @@ ax.quiver(xpath[:-1], ypath[:-1], xpath[1:]-xpath[:-1],
                    ypath[1:]-ypath[:-1],scale_units='xy', angles='xy', scale=1, color='teal', width=0.005)
 ax.clear()
 
-for i in range(1000):
+for i in range(10):
     iterator = swap(iterator)
     energy = total_energy(xpos,ypos,iterator)
     # subplot = fig.add_subplot(1,1,1)
@@ -87,7 +87,8 @@ for i in range(1000):
         energy_list = np.append(energy_list, energy)
     # else, do nothing and keep the old path
 
-
+plt.ioff()
 plt.plot(energy_list)
+plt.title("Energy of Chosen Paths")
 plt.show()
 
