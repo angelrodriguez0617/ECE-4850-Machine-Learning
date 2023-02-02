@@ -51,11 +51,12 @@ ypath = np.append(np.append(ypos[0],ypos[iterator]),ypos[0])
 line1, = ax.plot(xpath, ypath)
 # data[0] = xpath
 # data[1] = ypath
-ax.quiver(ypath[:-1], ypath[:-1], xpath[1:]-xpath[:-1], 
-                   ypath[1:]-ypath[:-1],scale_units='xy', angles='xy', scale=1, color='teal', width=0.005)
-
-
 plt.title("Traveling Salesman Path")
+# plt.text(xpos[0],ypos[0],'Start and Finish')
+plt.text(15, 90, f'Total Energy: {int(energy_list[0])}', fontsize='medium', weight="bold")
+ax.quiver(xpath[:-1], ypath[:-1], xpath[1:]-xpath[:-1], 
+                   ypath[1:]-ypath[:-1],scale_units='xy', angles='xy', scale=1, color='teal', width=0.005)
+ax.clear()
 
 for i in range(1000):
     iterator = swap(iterator)
@@ -63,15 +64,21 @@ for i in range(1000):
     # subplot = fig.add_subplot(1,1,1)
     # subplot.plot(np.append(np.append(xpos[0],xpos[iterator]),xpos[0]), np.append(np.append(ypos[0],ypos[iterator]),ypos[0]))
 
-    # updating the value of x and y
+    # updating the value of x and ys
     xpath = np.append(np.append(xpos[0],xpos[iterator]),xpos[0])
     ypath = np.append(np.append(ypos[0],ypos[iterator]),ypos[0])
     line1.set_xdata(xpath)
     line1.set_ydata(ypath)
+    ax.quiver(xpath[:-1], ypath[:-1], xpath[1:]-xpath[:-1], 
+                   ypath[1:]-ypath[:-1],scale_units='xy', angles='xy', scale=1, color='teal', width=0.005)
     # re-drawing the figure
+    plt.title("Traveling Salesman Path")
+    # plt.text(xpos[0],ypos[0],'Start and Finish')
+    plt.text(15, 90, f'Total Energy: {int(energy)}', fontsize='medium', weight="bold")
     fig.canvas.draw()
     # to flush the GUI events
     fig.canvas.flush_events()
+    ax.clear()
     time.sleep(0.1)
 
     # delta E = E_i - E_i-1 where E_i is current energy and E_i-1  is previous energy
