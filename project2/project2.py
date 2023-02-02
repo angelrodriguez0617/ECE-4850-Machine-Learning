@@ -58,7 +58,7 @@ ax.quiver(xpath[:-1], ypath[:-1], xpath[1:]-xpath[:-1],
                    ypath[1:]-ypath[:-1],scale_units='xy', angles='xy', scale=1, color='teal', width=0.005)
 ax.clear()
 
-for i in range(10):
+for i in range(1000):
     iterator = swap(iterator)
     energy = total_energy(xpos,ypos,iterator)
     # subplot = fig.add_subplot(1,1,1)
@@ -90,5 +90,6 @@ for i in range(10):
 plt.ioff()
 plt.plot(energy_list)
 plt.title("Energy of Chosen Paths")
+plt.text(0, 800, f'Lowest Energy Value: {int(energy_list[-1])}', fontsize='medium', weight="bold")
 plt.show()
 
