@@ -60,7 +60,7 @@ ax.clear()
 
 loop_counter = 1
 T = 2
-while T > 0:
+while T > 0.0001:
     print(f"Iteration inside while loop: {loop_counter}")
     # print(f"Temperature: {T}")
     loop_counter += 1
@@ -72,19 +72,20 @@ while T > 0:
     if energy < energy_list[-1]:
         energy_list = np.append(energy_list, energy)
         iterator = temp_iterator
-        T *= 0.99
     else: # else, accept current path if e^(-delta_E/T) > u
         u = random.uniform(0, 1)
         delta_E = energy - energy_list[-1]
         if np.exp(-delta_E/T) > u: # accept path
             energy_list = np.append(energy_list, energy)
             iterator = temp_iterator
-            T *= 0.99
-        else: # This is when we do not want to update the iterator
+        else: # This is when we do not want to update the iterator/path
+            # Always update T
+            T *= 0.9999
             continue
-        
+    # Always update T
+    T *= 0.9999
 
-    # Plot time
+    # Plot 
     # updating the value of x and ys
     xpath = np.append(np.append(xpos[0],xpos[iterator]),xpos[0])
     ypath = np.append(np.append(ypos[0],ypos[iterator]),ypos[0])
@@ -96,8 +97,8 @@ while T > 0:
     plt.title("Traveling Salesman Path")
     # plt.text(xpos[0],ypos[0],'Start and Finish')
     plt.text(15, 90, f'Total Energy: {int(energy)}', fontsize='medium', weight="bold")
-    format_T = "{:.2f}".format(T)
-    plt.text(15, 85, f'Tempurature: {format_T}', fontsize='medium', weight="bold")
+    format_T = "{:.3f}".format(T)
+    plt.text(15, 85, f'Temperature: {format_T}', fontsize='medium', weight="bold")
     fig.canvas.draw()
     # to flush the GUI events
     fig.canvas.flush_events()
@@ -108,6 +109,6 @@ while T > 0:
 plt.ioff()
 plt.plot(energy_list)
 plt.title("Energy of Chosen Paths")
-plt.text(0, 800, f'Lowest Energy Value: {int(energy_list[-1])}', fontsize='medium', weight="bold")
+plt.text(0, 600, f'Lowest Energy Value: {int(energy_list[-1])}', fontsize='medium', weight="bold")
 plt.show()
 
