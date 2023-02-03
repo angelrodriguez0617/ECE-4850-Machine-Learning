@@ -58,8 +58,11 @@ ax.quiver(xpath[:-1], ypath[:-1], xpath[1:]-xpath[:-1],
                    ypath[1:]-ypath[:-1],scale_units='xy', angles='xy', scale=1, color='teal', width=0.005)
 ax.clear()
 
+loop_counter = 1
 T = 10
 while T > 0:
+    print(F"Iteration inside while loop: {loop_counter}")
+    loop_counter += 1
     temp_iterator = swap(iterator)
     energy = total_energy(xpos,ypos, temp_iterator)
 
@@ -68,6 +71,7 @@ while T > 0:
     if energy < energy_list[-1]:
         energy_list = np.append(energy_list, energy)
         iterator = temp_iterator
+        T -= 0.01
     else: # else, accept current path if e^(-delta_E/T) > u
         u = random.uniform(0, 1)
         delta_E = energy - energy_list[-1]
@@ -91,6 +95,8 @@ while T > 0:
     plt.title("Traveling Salesman Path")
     # plt.text(xpos[0],ypos[0],'Start and Finish')
     plt.text(15, 90, f'Total Energy: {int(energy)}', fontsize='medium', weight="bold")
+    format_T = "{:.2f}".format(T)
+    plt.text(15, 85, f'Tempurature: {format_T}', fontsize='medium', weight="bold")
     fig.canvas.draw()
     # to flush the GUI events
     fig.canvas.flush_events()
