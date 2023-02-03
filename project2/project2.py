@@ -59,9 +59,10 @@ ax.quiver(xpath[:-1], ypath[:-1], xpath[1:]-xpath[:-1],
 ax.clear()
 
 loop_counter = 1
-T = 10
+T = 2
 while T > 0:
-    print(F"Iteration inside while loop: {loop_counter}")
+    print(f"Iteration inside while loop: {loop_counter}")
+    # print(f"Temperature: {T}")
     loop_counter += 1
     temp_iterator = swap(iterator)
     energy = total_energy(xpos,ypos, temp_iterator)
@@ -71,14 +72,14 @@ while T > 0:
     if energy < energy_list[-1]:
         energy_list = np.append(energy_list, energy)
         iterator = temp_iterator
-        T -= 0.01
+        T *= 0.99
     else: # else, accept current path if e^(-delta_E/T) > u
         u = random.uniform(0, 1)
         delta_E = energy - energy_list[-1]
         if np.exp(-delta_E/T) > u: # accept path
             energy_list = np.append(energy_list, energy)
             iterator = temp_iterator
-            T -= 0.01
+            T *= 0.99
         else: # This is when we do not want to update the iterator
             continue
         
