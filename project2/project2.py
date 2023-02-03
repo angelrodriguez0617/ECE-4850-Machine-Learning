@@ -8,8 +8,8 @@ ypos = np.array([80, 42, 72, 49, 80, 35, 7, 59, 91, 19, 43, 74, 3, 94, 76, 55, 1
 
 # These arrays will be the starting order of travel
 # The end of the paths will be the same as the starting point
-xpath = np.append(xpos, xpos[0])
-ypath = np.append(ypos, ypos[0])
+# xpath = np.append(xpos, xpos[0])
+# ypath = np.append(ypos, ypos[0])
 
 # Define iterator, second parameter is the step size
 # The first and the last coordinates in the paths will never be chosen
@@ -32,14 +32,14 @@ def total_energy(x,y,iter):
     total_energy += energy
     return total_energy
 
-
 def swap(iter):
     rand_int = random.randrange(0, iterator.size - 2)
     iter[rand_int], iter[rand_int-1] = iter[rand_int-1], iter[rand_int]
     return iter
 
+
 energy_list = np.array([])
-energy_list = np.append(energy_list, total_energy(xpath,ypath,iterator))
+energy_list = np.append(energy_list, total_energy(xpos,ypos,iterator))
 
 # enable interactive mode
 plt.ion()
@@ -58,12 +58,28 @@ ax.quiver(xpath[:-1], ypath[:-1], xpath[1:]-xpath[:-1],
                    ypath[1:]-ypath[:-1],scale_units='xy', angles='xy', scale=1, color='teal', width=0.005)
 ax.clear()
 
-for i in range(1000):
-    iterator = swap(iterator)
-    energy = total_energy(xpos,ypos,iterator)
-    # subplot = fig.add_subplot(1,1,1)
-    # subplot.plot(np.append(np.append(xpos[0],xpos[iterator]),xpos[0]), np.append(np.append(ypos[0],ypos[iterator]),ypos[0]))
+T = 10
+while T > 0:
+    temp_iterator = swap(iterator)
+    energy = total_energy(xpos,ypos, temp_iterator)
 
+    # delta E = E_i - E_i-1 where E_i is current energy and E_i-1  is previous energy
+    # if delta E < 0, accept the current path
+    if energy < energy_list[-1]:
+        energy_list = np.append(energy_list, energy)
+        iterator = temp_iterator
+    else: # else, accept current path if e^(-delta_E/T) > u
+        u = random.uniform(0, 1)
+        delta_E = energy - energy_list[-1]
+        if np.exp(-delta_E/T) > u: # accept path
+            energy_list = np.append(energy_list, energy)
+            iterator = temp_iterator
+            T -= 0.01
+        else: # This is when we do not want to update the iterator
+            continue
+        
+
+    # Plot time
     # updating the value of x and ys
     xpath = np.append(np.append(xpos[0],xpos[iterator]),xpos[0])
     ypath = np.append(np.append(ypos[0],ypos[iterator]),ypos[0])
@@ -81,11 +97,6 @@ for i in range(1000):
     ax.clear()
     time.sleep(0.1)
 
-    # delta E = E_i - E_i-1 where E_i is current energy and E_i-1  is previous energy
-    # if delta E < 0, accept the current path
-    if energy < energy_list[-1]:
-        energy_list = np.append(energy_list, energy)
-    # else, do nothing and keep the old path
 
 plt.ioff()
 plt.plot(energy_list)
