@@ -93,7 +93,7 @@ while T > T_stop:
     # re-drawing the figure
     plt.title("Traveling Salesman Path")
     for i, j in zip(xpath, ypath): # Writes the (x,y) coordinates above the coordinate location
-            plt.text(i, j, '({}, {})'.format(i, j), fontsize='small')
+            plt.text(i-4, j+1, '({}, {})'.format(i, j), fontsize='small')
     plt.text(10, 90, f'Energy: {int(energy)}', fontsize='medium', weight="bold")
     format_T = "{:.3f}".format(T)
     plt.text(10, 85, f'Temperature: {format_T}', fontsize='medium', weight="bold")
@@ -125,10 +125,10 @@ xpath = np.append(np.append(xpos[0],xpos[best_iterator]),xpos[0])
 ypath = np.append(np.append(ypos[0],ypos[best_iterator]),ypos[0])
 plt.plot(xpath,ypath)
 plt.quiver(xpath[:-1], ypath[:-1], xpath[1:]-xpath[:-1], 
-                   ypath[1:]-ypath[:-1],scale_units='xy', angles='xy', scale=1, color='teal', width=0.005)
+                   ypath[1:]-ypath[:-1],scale_units='xy', angles='xy', scale=1, color='teal', width=0.003)
 plt.title("Shortest Traveling Salesman Path Found")
 for i, j in zip(xpath, ypath): # Writes the (x,y) coordinates above the coordinate location
-            plt.text(i, j, '({}, {})'.format(i, j), fontsize='small')
+            plt.text(i-2, j+2, '({}, {})'.format(i, j), fontsize='small')
 plt.text(15, 90, f'Energy: {int(energy)}', fontsize='medium', weight="bold")
 plt.subplots_adjust(left=0.125, bottom=0.044, right=0.589, top=0.943, wspace=0.2, hspace=0.291)
 manager = plt.get_current_fig_manager()
