@@ -30,7 +30,6 @@ def total_energy(x,y,iter):
 
 def swap(iter):
     rand_int = random.randrange(0, iterator.size - 2)
-    print(rand_int)
     new_iter = iter
     new_iter[rand_int], new_iter[rand_int-1] = new_iter[rand_int-1], new_iter[rand_int]
     return new_iter
@@ -38,8 +37,6 @@ def swap(iter):
 
 energy_list = np.array([])
 energy_list = np.append(energy_list, total_energy(xpos,ypos,iterator))
-# iter_list = np.array([])
-# iter_list = np.append(iter_list, iterator)
 
 # enable interactive mode
 plt.ion()
@@ -50,7 +47,6 @@ xpath = np.append(np.append(xpos[0],xpos[iterator]),xpos[0])
 ypath = np.append(np.append(ypos[0],ypos[iterator]),ypos[0])
 line1, = ax.plot(xpath, ypath)
 plt.title("Traveling Salesman Path")
-# plt.text(xpos[0],ypos[0],'Start and Finish')
 plt.text(15, 90, f'Total Energy: {int(energy_list[0])}', fontsize='medium', weight="bold")
 ax.quiver(xpath[:-1], ypath[:-1], xpath[1:]-xpath[:-1], 
                    ypath[1:]-ypath[:-1],scale_units='xy', angles='xy', scale=1, color='teal', width=0.005)
@@ -58,49 +54,33 @@ ax.clear()
 
 # We will use this to graph the minimum path later
 best_iterator = copy.deepcopy(iterator)
-print(f"initial iterator: {iterator}")
 loop_counter = 1
 T = 2
-T_stop = 0.0001
+T_stop = 0.00001
+T_decimation = 0.9999 
 while T > T_stop:
-    # print(f"Iteration inside while loop: {loop_counter}")
-    # print(f"Temperature: {T}")
     loop_counter += 1
-    rand_int = random.randrange(0, iterator.size - 2)
-    temp_iterator = iterator
-    temp_iterator[rand_int], temp_iterator[rand_int-1] = temp_iterator[rand_int-1], temp_iterator[rand_int]
-    energy = total_energy(xpos,ypos, temp_iterator)
-
-    # Update the best path to be graphed in the end
-    #if energy < np.amin(energy_list):
-    #    best_iterator = temp_iterator
+    iterator = swap(iterator)
+    energy = total_energy(xpos,ypos, iterator)
 
     # delta E = E_i - E_i-1 where E_i is current energy and E_i-1  is previous energy
     # if delta E < 0, accept the current path
     if energy < energy_list[-1]:
         energy_list = np.append(energy_list, energy)
-        iterator = temp_iterator
-        best_iterator = copy.deepcopy(temp_iterator)
-        # iter_list = np.append(iter_list, iterator)
+        best_iterator = copy.deepcopy(iterator)
 
     else: # else, accept current path if e^(-delta_E/T) > u
         u = random.uniform(0, 1)
         delta_E = energy - energy_list[-1]
         if np.exp(-delta_E/T) > u: # accept path
             energy_list = np.append(energy_list, energy)
-            iterator = temp_iterator
-            # iter_list = np.append(iter_list, iterator)
         else: # This is when we do not want to update the iterator/path
             # Always update T
-            print(f"not_supposed_to_update_iterator: {iterator}")
-            T *= 0.999
+            T *= T_decimation
             continue
     # Always update T
-    T *= 0.999
+    T *= T_decimation
     print(f"Accepted energy: {energy_list[-1]}")
-    print(f"iterator: {iterator}")
-
-    
 
     # Plot 
     # updating the value of x and ys
@@ -112,8 +92,6 @@ while T > T_stop:
                    ypath[1:]-ypath[:-1],scale_units='xy', angles='xy', scale=1, color='teal', width=0.005)
     # re-drawing the figure
     plt.title("Traveling Salesman Path")
-    # plt.text(xpos[0],ypos[0],'Start and Finish')
-    plt.text(15, 90, f'Total Energy: {int(energy)}', fontsize='medium', weight="bold")
     format_T = "{:.3f}".format(T)
     plt.text(15, 85, f'Temperature: {format_T}', fontsize='medium', weight="bold")
     fig.canvas.draw()
@@ -123,12 +101,8 @@ while T > T_stop:
     time.sleep(0.1)
 
 print(f"best_iterator: {best_iterator}")
-print(f"final iterator: {iterator}")
-
-# min_index = np.argmin(energy_list)
-# best_iterator = iter_list[min_index]
-# print(f"min_index: {min_index}")
-# print(f"min_index type: {type(min_index)}")
+lowest_energy = total_energy(xpos,ypos,best_iterator)
+print(f"lowest_energy: {lowest_energy}")
 
 # Turn off the fast updating plot
 plt.ioff()
@@ -144,11 +118,9 @@ plt.text(0, 650, f'Lowest Energy Value: {int(np.amin(energy_list))}', fontsize='
 plt.subplot(2, 1, 2)
 xpath = np.append(np.append(xpos[0],xpos[best_iterator]),xpos[0])
 ypath = np.append(np.append(ypos[0],ypos[best_iterator]),ypos[0])
-print(f"{xpath}")
-print(f"{ypath}")
-lowest_energy = total_energy(xpos,ypos,best_iterator)
-print(f"lowest_energy: {lowest_energy}")
 plt.plot(xpath,ypath)
+plt.quiver(xpath[:-1], ypath[:-1], xpath[1:]-xpath[:-1], 
+                   ypath[1:]-ypath[:-1],scale_units='xy', angles='xy', scale=1, color='teal', width=0.005)
 plt.title("Shortest Traveling Salesman Path")
 plt.text(15, 90, f'Total Energy: {int(np.amin(energy_list))}', fontsize='medium', weight="bold")
 format_T = "{:.3f}".format(T)
