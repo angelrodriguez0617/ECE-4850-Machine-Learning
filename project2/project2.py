@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import random
 import time
+import copy
 
 xpos = np.array([57, 16, 14, 47, 90, 55, 35, 80, 45, 38, 78, 36, 53, 71, 87, 32, 65, 97, 7])
 ypos = np.array([80, 42, 72, 49, 80, 35, 7, 59, 91, 19, 43, 74, 3, 94, 76, 55, 18, 49, 51, 99])
@@ -29,8 +30,10 @@ def total_energy(x,y,iter):
 
 def swap(iter):
     rand_int = random.randrange(0, iterator.size - 2)
-    iter[rand_int], iter[rand_int-1] = iter[rand_int-1], iter[rand_int]
-    return iter
+    print(rand_int)
+    new_iter = iter
+    new_iter[rand_int], new_iter[rand_int-1] = new_iter[rand_int-1], new_iter[rand_int]
+    return new_iter
 
 
 energy_list = np.array([])
@@ -54,7 +57,8 @@ ax.quiver(xpath[:-1], ypath[:-1], xpath[1:]-xpath[:-1],
 ax.clear()
 
 # We will use this to graph the minimum path later
-best_iterator = iterator
+best_iterator = copy.deepcopy(iterator)
+print(f"initial iterator: {iterator}")
 loop_counter = 1
 T = 2
 T_stop = 0.0001
@@ -62,18 +66,21 @@ while T > T_stop:
     # print(f"Iteration inside while loop: {loop_counter}")
     # print(f"Temperature: {T}")
     loop_counter += 1
-    temp_iterator = swap(iterator)
+    rand_int = random.randrange(0, iterator.size - 2)
+    temp_iterator = iterator
+    temp_iterator[rand_int], temp_iterator[rand_int-1] = temp_iterator[rand_int-1], temp_iterator[rand_int]
     energy = total_energy(xpos,ypos, temp_iterator)
 
     # Update the best path to be graphed in the end
-    if energy < np.amin(energy_list):
-        best_iterator = temp_iterator
+    #if energy < np.amin(energy_list):
+    #    best_iterator = temp_iterator
 
     # delta E = E_i - E_i-1 where E_i is current energy and E_i-1  is previous energy
     # if delta E < 0, accept the current path
     if energy < energy_list[-1]:
         energy_list = np.append(energy_list, energy)
         iterator = temp_iterator
+        best_iterator = copy.deepcopy(temp_iterator)
         # iter_list = np.append(iter_list, iterator)
 
     else: # else, accept current path if e^(-delta_E/T) > u
@@ -85,11 +92,14 @@ while T > T_stop:
             # iter_list = np.append(iter_list, iterator)
         else: # This is when we do not want to update the iterator/path
             # Always update T
-            T *= 0.9999
+            print(f"not_supposed_to_update_iterator: {iterator}")
+            T *= 0.999
             continue
     # Always update T
-    T *= 0.9999
+    T *= 0.999
     print(f"Accepted energy: {energy_list[-1]}")
+    print(f"iterator: {iterator}")
+
     
 
     # Plot 
@@ -112,6 +122,8 @@ while T > T_stop:
     ax.clear()
     time.sleep(0.1)
 
+print(f"best_iterator: {best_iterator}")
+print(f"final iterator: {iterator}")
 
 # min_index = np.argmin(energy_list)
 # best_iterator = iter_list[min_index]
@@ -132,6 +144,10 @@ plt.text(0, 650, f'Lowest Energy Value: {int(np.amin(energy_list))}', fontsize='
 plt.subplot(2, 1, 2)
 xpath = np.append(np.append(xpos[0],xpos[best_iterator]),xpos[0])
 ypath = np.append(np.append(ypos[0],ypos[best_iterator]),ypos[0])
+print(f"{xpath}")
+print(f"{ypath}")
+lowest_energy = total_energy(xpos,ypos,best_iterator)
+print(f"lowest_energy: {lowest_energy}")
 plt.plot(xpath,ypath)
 plt.title("Shortest Traveling Salesman Path")
 plt.text(15, 90, f'Total Energy: {int(np.amin(energy_list))}', fontsize='medium', weight="bold")
