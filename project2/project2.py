@@ -40,6 +40,8 @@ def swap(iter):
 
 energy_list = np.array([])
 energy_list = np.append(energy_list, total_energy(xpos,ypos,iterator))
+# iter_list = np.array([])
+# iter_list = np.append(iter_list, iterator)
 
 # enable interactive mode
 plt.ion()
@@ -49,8 +51,6 @@ ax = fig.add_subplot(111)
 xpath = np.append(np.append(xpos[0],xpos[iterator]),xpos[0])
 ypath = np.append(np.append(ypos[0],ypos[iterator]),ypos[0])
 line1, = ax.plot(xpath, ypath)
-# data[0] = xpath
-# data[1] = ypath
 plt.title("Traveling Salesman Path")
 # plt.text(xpos[0],ypos[0],'Start and Finish')
 plt.text(15, 90, f'Total Energy: {int(energy_list[0])}', fontsize='medium', weight="bold")
@@ -58,26 +58,35 @@ ax.quiver(xpath[:-1], ypath[:-1], xpath[1:]-xpath[:-1],
                    ypath[1:]-ypath[:-1],scale_units='xy', angles='xy', scale=1, color='teal', width=0.005)
 ax.clear()
 
+# We will use this to graph the minimum path later
+best_iterator = iterator
 loop_counter = 1
 T = 2
-while T > 0.0001:
+while T > 0.01:
     print(f"Iteration inside while loop: {loop_counter}")
     # print(f"Temperature: {T}")
     loop_counter += 1
     temp_iterator = swap(iterator)
     energy = total_energy(xpos,ypos, temp_iterator)
 
+    # Update the best path to be graphed in the end
+    if energy < np.amin(energy_list):
+        best_iterator = temp_iterator
+
     # delta E = E_i - E_i-1 where E_i is current energy and E_i-1  is previous energy
     # if delta E < 0, accept the current path
     if energy < energy_list[-1]:
         energy_list = np.append(energy_list, energy)
-        iterator = temp_iterator
+        # iterator = temp_iterator
+        # iter_list = np.append(iter_list, iterator)
+
     else: # else, accept current path if e^(-delta_E/T) > u
         u = random.uniform(0, 1)
         delta_E = energy - energy_list[-1]
         if np.exp(-delta_E/T) > u: # accept path
             energy_list = np.append(energy_list, energy)
-            iterator = temp_iterator
+            # iterator = temp_iterator
+            # iter_list = np.append(iter_list, iterator)
         else: # This is when we do not want to update the iterator/path
             # Always update T
             T *= 0.9999
@@ -105,10 +114,33 @@ while T > 0.0001:
     ax.clear()
     time.sleep(0.1)
 
+# min_index = np.argmin(energy_list)
+# best_iterator = iter_list[min_index]
+# print(f"min_index: {min_index}")
+# print(f"min_index type: {type(min_index)}")
 
+# Turn off the fast updating plot
 plt.ioff()
+ax.remove()
+
+# Plot the energy decrease over time
+plt.subplot(2, 1, 1)
 plt.plot(energy_list)
 plt.title("Energy of Chosen Paths")
-plt.text(0, 600, f'Lowest Energy Value: {int(energy_list[-1])}', fontsize='medium', weight="bold")
+plt.text(0, 600, f'Lowest Energy Value: {int(np.amin(energy_list))}', fontsize='medium', weight="bold")
+
+# Plot the ending path
+plt.subplot(2, 1, 2)
+xpath = np.append(np.append(xpos[0],xpos[best_iterator]),xpos[0])
+ypath = np.append(np.append(ypos[0],ypos[best_iterator]),ypos[0])
+plt.plot(xpath,ypath)
+plt.title("Shortest Traveling Salesman Path")
+plt.text(15, 90, f'Total Energy: {int(np.amin(energy_list))}', fontsize='medium', weight="bold")
+format_T = "{:.3f}".format(T)
+plt.text(15, 85, f'Temperature: {format_T}', fontsize='medium', weight="bold")
+
+# plt.subplots_adjust(left=0.07, bottom=0.26, right=0.7, top=0.93, wspace=0.2, hspace=0.4)
+manager = plt.get_current_fig_manager()
+manager.full_screen_toggle() # Make full screen for better view, Alt-F4 to exit full screen
 plt.show()
 
