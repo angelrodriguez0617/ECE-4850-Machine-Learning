@@ -83,7 +83,7 @@ while T > T_stop:
     print(f"Accepted energy: {energy_list[-1]}")
 
     # Plot 
-    # updating the value of x and ys
+    # updating the values of x and y
     xpath = np.append(np.append(xpos[0],xpos[iterator]),xpos[0])
     ypath = np.append(np.append(ypos[0],ypos[iterator]),ypos[0])
     line1.set_xdata(xpath)
@@ -92,6 +92,7 @@ while T > T_stop:
                    ypath[1:]-ypath[:-1],scale_units='xy', angles='xy', scale=1, color='teal', width=0.005)
     # re-drawing the figure
     plt.title("Traveling Salesman Path")
+    plt.text(15, 90, f'Energy: {int(energy)}', fontsize='medium', weight="bold")
     format_T = "{:.3f}".format(T)
     plt.text(15, 85, f'Temperature: {format_T}', fontsize='medium', weight="bold")
     fig.canvas.draw()
@@ -100,9 +101,9 @@ while T > T_stop:
     ax.clear()
     time.sleep(0.1)
 
-print(f"best_iterator: {best_iterator}")
-lowest_energy = total_energy(xpos,ypos,best_iterator)
-print(f"lowest_energy: {lowest_energy}")
+# print(f"best_iterator: {best_iterator}")
+# lowest_energy = total_energy(xpos,ypos,best_iterator)
+# print(f"lowest_energy: {lowest_energy}")
 
 # Turn off the fast updating plot
 plt.ioff()
@@ -121,11 +122,9 @@ ypath = np.append(np.append(ypos[0],ypos[best_iterator]),ypos[0])
 plt.plot(xpath,ypath)
 plt.quiver(xpath[:-1], ypath[:-1], xpath[1:]-xpath[:-1], 
                    ypath[1:]-ypath[:-1],scale_units='xy', angles='xy', scale=1, color='teal', width=0.005)
-plt.title("Shortest Traveling Salesman Path")
+plt.title("Shortest Traveling Salesman Path Found")
 plt.text(15, 90, f'Total Energy: {int(np.amin(energy_list))}', fontsize='medium', weight="bold")
 format_T = "{:.3f}".format(T)
-plt.text(15, 85, f'Temperature: {format_T}', fontsize='medium', weight="bold")
-
 plt.subplots_adjust(left=0.125, bottom=0.044, right=0.589, top=0.943, wspace=0.2, hspace=0.291)
 manager = plt.get_current_fig_manager()
 manager.full_screen_toggle() # Make full screen for better view, Alt-F4 to exit full screen
