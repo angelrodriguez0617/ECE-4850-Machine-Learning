@@ -6,11 +6,6 @@ import time
 xpos = np.array([57, 16, 14, 47, 90, 55, 35, 80, 45, 38, 78, 36, 53, 71, 87, 32, 65, 97, 7])
 ypos = np.array([80, 42, 72, 49, 80, 35, 7, 59, 91, 19, 43, 74, 3, 94, 76, 55, 18, 49, 51, 99])
 
-# These arrays will be the starting order of travel
-# The end of the paths will be the same as the starting point
-# xpath = np.append(xpos, xpos[0])
-# ypath = np.append(ypos, ypos[0])
-
 # Define iterator, second parameter is the step size
 # The first and the last coordinates in the paths will never be chosen
 iterator = np.arange(1,xpos.size-1,1)
@@ -62,9 +57,9 @@ ax.clear()
 best_iterator = iterator
 loop_counter = 1
 T = 2
-T_stop = 0.01
+T_stop = 0.0001
 while T > T_stop:
-    print(f"Iteration inside while loop: {loop_counter}")
+    # print(f"Iteration inside while loop: {loop_counter}")
     # print(f"Temperature: {T}")
     loop_counter += 1
     temp_iterator = swap(iterator)
@@ -78,7 +73,7 @@ while T > T_stop:
     # if delta E < 0, accept the current path
     if energy < energy_list[-1]:
         energy_list = np.append(energy_list, energy)
-        # iterator = temp_iterator
+        iterator = temp_iterator
         # iter_list = np.append(iter_list, iterator)
 
     else: # else, accept current path if e^(-delta_E/T) > u
@@ -86,14 +81,15 @@ while T > T_stop:
         delta_E = energy - energy_list[-1]
         if np.exp(-delta_E/T) > u: # accept path
             energy_list = np.append(energy_list, energy)
-            # iterator = temp_iterator
+            iterator = temp_iterator
             # iter_list = np.append(iter_list, iterator)
         else: # This is when we do not want to update the iterator/path
             # Always update T
-            T *= 0.99
+            T *= 0.9999
             continue
     # Always update T
-    T *= 0.99
+    T *= 0.9999
+    print(f"Accepted energy: {energy_list[-1]}")
     
 
     # Plot 
@@ -142,7 +138,7 @@ plt.text(15, 90, f'Total Energy: {int(np.amin(energy_list))}', fontsize='medium'
 format_T = "{:.3f}".format(T)
 plt.text(15, 85, f'Temperature: {format_T}', fontsize='medium', weight="bold")
 
-# plt.subplots_adjust(left=0.07, bottom=0.26, right=0.7, top=0.93, wspace=0.2, hspace=0.4)
+plt.subplots_adjust(left=0.125, bottom=0.044, right=0.589, top=0.943, wspace=0.2, hspace=0.291)
 manager = plt.get_current_fig_manager()
 manager.full_screen_toggle() # Make full screen for better view, Alt-F4 to exit full screen
 plt.show()
