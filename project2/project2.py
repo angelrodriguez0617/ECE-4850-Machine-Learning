@@ -62,7 +62,8 @@ ax.clear()
 best_iterator = iterator
 loop_counter = 1
 T = 2
-while T > 0.01:
+T_stop = 0.01
+while T > T_stop:
     print(f"Iteration inside while loop: {loop_counter}")
     # print(f"Temperature: {T}")
     loop_counter += 1
@@ -89,10 +90,11 @@ while T > 0.01:
             # iter_list = np.append(iter_list, iterator)
         else: # This is when we do not want to update the iterator/path
             # Always update T
-            T *= 0.9999
+            T *= 0.99
             continue
     # Always update T
-    T *= 0.9999
+    T *= 0.99
+    
 
     # Plot 
     # updating the value of x and ys
@@ -114,6 +116,7 @@ while T > 0.01:
     ax.clear()
     time.sleep(0.1)
 
+
 # min_index = np.argmin(energy_list)
 # best_iterator = iter_list[min_index]
 # print(f"min_index: {min_index}")
@@ -127,7 +130,7 @@ ax.remove()
 plt.subplot(2, 1, 1)
 plt.plot(energy_list)
 plt.title("Energy of Chosen Paths")
-plt.text(0, 600, f'Lowest Energy Value: {int(np.amin(energy_list))}', fontsize='medium', weight="bold")
+plt.text(0, 650, f'Lowest Energy Value: {int(np.amin(energy_list))}', fontsize='medium', weight="bold")
 
 # Plot the ending path
 plt.subplot(2, 1, 2)
