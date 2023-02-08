@@ -4,12 +4,13 @@ import random
 import time
 import copy
 
-xpos = np.array([57, 16, 14, 47, 90, 55, 35, 80, 45, 38, 78, 36, 53, 71, 87, 32, 65, 97, 7])
+xpos = np.array([57, 16, 14, 47, 90, 55, 3, 5, 80, 45, 38, 78, 36, 53, 71, 87, 32, 65, 97, 7])
 ypos = np.array([80, 42, 72, 49, 80, 35, 7, 59, 91, 19, 43, 74, 3, 94, 76, 55, 18, 49, 51, 99])
 
 # Define iterator, second parameter is the step size
 # The first and the last coordinates in the paths will never be chosen
-iterator = np.arange(1,xpos.size-1,1)
+iterator = np.arange(1,xpos.size,1)
+original_iterator = copy.deepcopy(iterator)
 
 def get_distance(x1,y1,x2,y2):
     """x1/y1 correspond to first coordinate
@@ -56,8 +57,8 @@ ax.clear()
 best_iterator = copy.deepcopy(iterator)
 loop_counter = 1
 T = 2
-T_stop = 0.00001
-T_decimation = 0.9999 
+T_stop = 0.000001
+T_decimation = 0.99999 
 while T > T_stop:
     loop_counter += 1
     iterator = swap(iterator)
@@ -94,43 +95,55 @@ while T > T_stop:
     plt.title("Traveling Salesman Path")
     for i, j in zip(xpath, ypath): # Writes the (x,y) coordinates above the coordinate location
             plt.text(i-4, j+1, '({}, {})'.format(i, j), fontsize='small')
-    plt.text(10, 90, f'Energy: {int(energy)}', fontsize='medium', weight="bold")
+    plt.text(60, 15, f'Energy: {int(energy)}', fontsize='medium', weight="bold")
     format_T = "{:.3f}".format(T)
-    plt.text(10, 85, f'Temperature: {format_T}', fontsize='medium', weight="bold")
+    plt.text(60, 10, f'Temperature: {format_T}', fontsize='medium', weight="bold")
     fig.canvas.draw()
     # to flush the GUI events
     fig.canvas.flush_events()
     ax.clear()
     time.sleep(0.1)
 
-# print(f"best_iterator: {best_iterator}")
+# print(f"original_iterator size: {original_iterator.size}\n{original_iterator}")
+# print(f"best_iterator size: {best_iterator.size}\n{best_iterator}")
 lowest_energy = total_energy(xpos,ypos,best_iterator)
-print(f"lowest_energy: {lowest_energy}")
-print(f"min value in energy_list: {np.amin(energy_list)}")
-energy = total_energy(xpos,ypos,best_iterator)
+# print(f"lowest_energy: {lowest_energy}")
+# print(f"min value in energy_list: {np.amin(energy_list)}")
 
 # Turn off the fast updating plot
 plt.ioff()
 ax.remove()
 
 # Plot the energy decrease over time
-plt.subplot(2, 1, 1)
+plt.subplot(2, 1, 2)
 plt.plot(energy_list)
 plt.title("Energy of Chosen Paths")
 plt.text(0, 650, f'Lowest Energy Value: {int(np.amin(energy_list))}', fontsize='medium', weight="bold")
 
+# Plot the unoptimized path
+plt.subplot(2, 2, 1)
+xpath = np.append(xpos,xpos[0])
+ypath = np.append(ypos,ypos[0])
+plt.plot(xpath,ypath)
+plt.quiver(xpath[:-1], ypath[:-1], xpath[1:]-xpath[:-1], 
+                   ypath[1:]-ypath[:-1],scale_units='xy', angles='xy', scale=1, color='teal', width=0.003)
+plt.title("Traveling Salesman Path Before Simulated Annealing")
+for i, j in zip(xpath, ypath): # Writes the (x,y) coordinates above the coordinate location
+            plt.text(i-2, j+2, '({}, {})'.format(i, j), fontsize='small')
+plt.text(80, 10, f'Energy: {int(energy_list[0])}', fontsize='medium', weight="bold")
+
 # Plot the ending path
-plt.subplot(2, 1, 2)
+plt.subplot(2, 2, 2)
 xpath = np.append(np.append(xpos[0],xpos[best_iterator]),xpos[0])
 ypath = np.append(np.append(ypos[0],ypos[best_iterator]),ypos[0])
 plt.plot(xpath,ypath)
 plt.quiver(xpath[:-1], ypath[:-1], xpath[1:]-xpath[:-1], 
                    ypath[1:]-ypath[:-1],scale_units='xy', angles='xy', scale=1, color='teal', width=0.003)
-plt.title("Shortest Traveling Salesman Path Found")
+plt.title("Traveling Salesman Path After Simulated Annealing")
 for i, j in zip(xpath, ypath): # Writes the (x,y) coordinates above the coordinate location
             plt.text(i-2, j+2, '({}, {})'.format(i, j), fontsize='small')
-plt.text(15, 90, f'Energy: {int(energy)}', fontsize='medium', weight="bold")
-plt.subplots_adjust(left=0.125, bottom=0.044, right=0.589, top=0.943, wspace=0.2, hspace=0.291)
+plt.text(80, 10, f'Energy: {int(lowest_energy)}', fontsize='medium', weight="bold")
+# plt.subplots_adjust(left=0.125, bottom=0.044, right=0.589, top=0.943, wspace=0.2, hspace=0.291)
 manager = plt.get_current_fig_manager()
 manager.full_screen_toggle() # Make full screen for better view, Alt-F4 to exit full screen
 plt.show()
