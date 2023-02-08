@@ -56,7 +56,7 @@ ax.clear()
 # We will use this to graph the minimum path later
 best_iterator = copy.deepcopy(iterator)
 loop_counter = 1
-T = 2
+T = 10
 T_stop = 0.000001
 T_decimation = 0.99999 
 while T > T_stop:
