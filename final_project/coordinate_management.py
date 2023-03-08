@@ -54,7 +54,7 @@ class drone_object():
         movement_distance = math.sqrt(self.position[0]**2 + move_position[0]**2 - 2*self.position[0]*move_position[0]*math.cos(self.position[1] - move_position[1]) + (self.position[2] - move_position[2])**2)
         # if we arent given how finely to chunck our movement up, chunck every 10cms
         if segmentation_num == None:
-            segmentation_distance = 10
+            segmentation_distance = 5
             segmentation_numb = math.floor(movement_distance / segmentation_distance)
         else:
             segmentation_numb = segmentation_num
@@ -66,6 +66,7 @@ class drone_object():
         self.__move_drone_cylin(movements, 50)
         for i in range(segmentation_numb-1):
             self.__move_drone_cylin(movements, 100)
+        # TODO : tail end code seems wrong, generates this: Send command: 'go -300 0 0 50'
         tail_movement = (move_position - self.position)
         self.__move_drone_cylin(tail_movement, 50)
 
@@ -76,7 +77,7 @@ class drone_object():
             # adjust the position numerically first
             self.position = self.position + distance
             # check to see if it would go over our limits
-            if self.position[2] <= self.limits[2] | self.position[1] >= self.limits[1] | self.position[0] >= self.limits[0]:
+            if self.position[2] <= self.limits[2] or self.position[1] >= self.limits[1] or self.position[0] >= self.limits[0]:
                 raise Exception('Limit Error')
         except Exception as error:
             print(repr(error) + f': attempted position ({self.position[0]}, {self.position[1]}, {self.position[2]})')
@@ -92,4 +93,4 @@ class drone_object():
     # this function moves the drone along a cartesian vector
     # distance is a numpy array with [x, y, z] in cm
     def __move_drone_cart(self, distance, speed=10):
-        self.drone.go_xyz_speed(distance[0], distance[1], distance[2], speed)
+        self.drone.go_xyz_speed(round(distance[0]), round(distance[1]), round(distance[2]), speed)
