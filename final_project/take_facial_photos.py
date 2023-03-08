@@ -36,7 +36,7 @@ def recordVideo(mv, face, angle, img_num=1):
     record = 150
     # IDK why, but *'XVID' is no longer working, instead I am using *'mp4v'
     # video = cv.VideoWriter(f'{face}_{angle}_{img_num}.mp4', cv.VideoWriter_fourcc(*'XVID'), 30, (width, height))
-    video = cv.VideoWriter(f'{face}_{angle}_{img_num}.mp4', cv.VideoWriter_fourcc(*'mp4v'), 30, (width, height))
+    video = cv.VideoWriter(f'{face}_{angle}_video_{img_num}.mp4', cv.VideoWriter_fourcc(*'mp4v'), 30, (width, height))
     while record > 0:
         if count%30 == 0:
             cv.imwrite(f'{face}_{angle}_img{img_num}.png', frame_read.frame)
