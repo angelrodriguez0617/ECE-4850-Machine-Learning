@@ -37,19 +37,22 @@ def calculate_likelyhood(text, prob_array):
             char_iterator = 0
         else:
             char_iterator = char_iterator - 96
-        likelyhood += (prob_array[old_char_iterator, char_iterator])
+        likelyhood += np.log(prob_array[old_char_iterator, char_iterator])
         old_char_iterator = char_iterator
     return likelyhood
 
 def swap_char(key):
     our_key = copy.copy(key)
     position = random.randrange(our_key.size)
-    swap_direction = random.choice([-1, 1])
-    new_position = position + swap_direction
-    if new_position < 0:
-        new_position = our_key.size - 1
-    elif new_position >= our_key.size:
-        new_position = 0
+    new_position = random.randrange(our_key.size)
+    while position == new_position:
+        new_position = random.randrange(our_key.size)
+    #swap_direction = random.choice([-1, 1])
+    #new_position = position + swap_direction
+    #if new_position < 0:
+    #    new_position = our_key.size - 1
+    #elif new_position >= our_key.size:
+    #    new_position = 0
     our_key[position], our_key[new_position] = our_key[new_position], our_key[position]
     return our_key, (our_key[new_position], our_key[position])
 
