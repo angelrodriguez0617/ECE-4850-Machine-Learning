@@ -8,24 +8,35 @@ import shutil
 from time import sleep
 import os
 
+# This will be used to specify which person the recording will be of
+faces = ["Angel", "Austin", "Shekaramiz"] 
+# This will be used to specify which facial angle will be recorded
+angles = ["front", "left", "right"]
+# These are variable to adjust depending on whose face we are recording and which angle it is
+face = 0
+angle = 0
+
 path = "Default"
+parent_directory = os.getcwd()
+directory = str(faces[face] + "_" + angles[angle])
+path = os.path.join(parent_directory, directory)
+if os.path.isdir(directory):
+    shutil.rmtree(directory)
+os.mkdir(path)
+os.chdir(path)
 
 def recordVideo(mv, face, angle, img_num=1):
     '''File each step of the path
-    img_num represents the number of the photo that is being taken'''
-    parent_directory = os.getcwd()
-    directory = str(face + "_" + angle)
-    path = os.path.join(parent_directory, directory)
-    if os.path.isdir(directory):
-        shutil.rmtree(directory)
-    os.mkdir(path)
-    os.chdir(path)
+    img_num represents the number of the photo that is being taken since program start'''
+    
     drone = mv.get_drone()
     count = 0
     frame_read = drone.get_frame_read()
     height, width, _ = frame_read.frame.shape
-    record = 300
-    video = cv.VideoWriter(f'{face}_{angle}_{img_num}.mp4', cv.VideoWriter_fourcc(*'XVID'), 30, (width, height))
+    record = 150
+    # IDK why, but *'XVID' is no longer working, instead I am using *'mp4v'
+    # video = cv.VideoWriter(f'{face}_{angle}_{img_num}.mp4', cv.VideoWriter_fourcc(*'XVID'), 30, (width, height))
+    video = cv.VideoWriter(f'{face}_{angle}_{img_num}.mp4', cv.VideoWriter_fourcc(*'mp4v'), 30, (width, height))
     while record > 0:
         if count%30 == 0:
             cv.imwrite(f'{face}_{angle}_img{img_num}.png', frame_read.frame)
@@ -52,13 +63,6 @@ if __name__ == "__main__":
     y_boundary = 200 # Y-axis boundary of path
     z_boundary = 200 # Z-axis boundary of path
 
-    # This will be used to specify which person the recording will be of
-    faces = ["Angel", "Austin", "Shekaramiz"] 
-    # This will be used to specify which facial angle will be recorded
-    angles = ["front", "left", "right"]
-    # These are variable to adjust depending on whose face we are recording and which angle it is
-    face = 0
-    angle = 0
     # Record vidoe and pictures
     img_num = recordVideo(drone, faces[face], angles[angle])
     # img_num should equal 10 after this meaning 10 photos were taken
@@ -86,8 +90,8 @@ if __name__ == "__main__":
         drone.move(up=z_step)
         img_num = recordVideo(drone, faces[face], angles[angle], img_num+1)
 
-    print("\n >>>>>>>>>>>>>>>>OUTSIDE OF THE WHILE LOOP\n")
-    drone.land()
+    print("\n >>>>>>>>>>>>>>>> OUTSIDE OF THE WHILE LOOP\n")
+    drone.land(turn_off=True)
 
       
         
