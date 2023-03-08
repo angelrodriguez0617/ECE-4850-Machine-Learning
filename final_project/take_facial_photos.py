@@ -1,15 +1,45 @@
 import numpy as np
 from check_camera import check_camera
-import time
 import movement as mov
-from mission import recordVideo
+import cv2 as cv
+from time import sleep
+import cv2 as cv
+import shutil
+from time import sleep
+import os
 
+path = "Default"
 
-# Initialize drone object and take off
-drone = mov.movement()
+def recordVideo(mv, face, angle):
+    '''File each step of the path'''
+    parent_directory = os.getcwd()
+    directory = face
+    path = os.path.join(parent_directory, directory)
+    if os.path.isdir(directory):
+        shutil.rmtree(directory)
+    os.mkdir(path)
+    os.chdir(path)
+    drone = mv.get_drone()
+    count = 0
+    img_num = 1
+    frame_read = drone.get_frame_read()
+    height, width, _ = frame_read.frame.shape
+    record = 300
+    video = cv.VideoWriter(f'{face}_{angle}.mp4', cv.VideoWriter_fourcc(*'XVID'), 30, (width, height))
+    while record > 0:
+        if count%30 == 0:
+            cv.imwrite(f'{face}_{angle}_img{img_num}.png', frame_read.frame)
+            img_num += 1
+        count += 1
+        video.write(frame_read.frame)
+        sleep(1/60)
+        record -= 1
+    video.release()
 
 if __name__ == "__main__":
-    
+    # Initialize drone object and take off
+    drone = mov.movement()
+
     camera = drone.get_drone()
     if camera.get_battery() < 20: # if battery is under 20%
         print("\n" + ">>>>>>>>>>>>>>>> DRONE BATTERY LOW. CHANGE BATTERY!")
@@ -25,7 +55,7 @@ if __name__ == "__main__":
     # This will be used to specify which facial angle will be recorded
     angles = ["front", "left", "right"]
     # Record
-    recordVideo(drone, faces[0], angles[0])
+    video = recordVideo(drone, faces[0], angles[0])
 
     while drone.get_y_location() <= y_boundary: # The snake path progressively moves towards the y_boundary which should be the end of its mission 
         while drone.get_x_location() + x_step <= x_boundary: # Keep moving forward until the x_boundary is reached
@@ -42,10 +72,8 @@ if __name__ == "__main__":
             drone.move(left=y_step)
         else: # When here, we should be done with the mission, so exit the while loop
             break
-        print("----------------------------------------")
-        print(f"{drone.get_location()}")
 
-    print("OUTSIDE OF THE WHILE LOOP")
+    print("\n >>>>>>>>>>>>>>>>OUTSIDE OF THE WHILE LOOP\n")
     drone.land()
 
       
