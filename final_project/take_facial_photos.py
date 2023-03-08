@@ -10,10 +10,11 @@ import os
 
 path = "Default"
 
-def recordVideo(mv, face, angle):
-    '''File each step of the path'''
+def recordVideo(mv, face, angle, img_num=1):
+    '''File each step of the path
+    img_num represents the number of the photo that is being taken'''
     parent_directory = os.getcwd()
-    directory = face
+    directory = str(face + "_" + angle)
     path = os.path.join(parent_directory, directory)
     if os.path.isdir(directory):
         shutil.rmtree(directory)
@@ -21,11 +22,10 @@ def recordVideo(mv, face, angle):
     os.chdir(path)
     drone = mv.get_drone()
     count = 0
-    img_num = 1
     frame_read = drone.get_frame_read()
     height, width, _ = frame_read.frame.shape
     record = 300
-    video = cv.VideoWriter(f'{face}_{angle}.mp4', cv.VideoWriter_fourcc(*'XVID'), 30, (width, height))
+    video = cv.VideoWriter(f'{face}_{angle}_{img_num}.mp4', cv.VideoWriter_fourcc(*'XVID'), 30, (width, height))
     while record > 0:
         if count%30 == 0:
             cv.imwrite(f'{face}_{angle}_img{img_num}.png', frame_read.frame)
@@ -35,6 +35,7 @@ def recordVideo(mv, face, angle):
         sleep(1/60)
         record -= 1
     video.release()
+    return img_num
 
 if __name__ == "__main__":
     # Initialize drone object and take off
@@ -46,6 +47,7 @@ if __name__ == "__main__":
 
     x_step = 30 # Steps the drone takes fowards and backwards
     y_step = 30 # Steps the drone takes left and right
+    z_step = 30 # Steps the drone takes up
     x_boundary = 200 # X-axis boundary of path
     y_boundary = 200 # Y-axis boundary of path
     z_boundary = 200 # Z-axis boundary of path
@@ -54,24 +56,35 @@ if __name__ == "__main__":
     faces = ["Angel", "Austin", "Shekaramiz"] 
     # This will be used to specify which facial angle will be recorded
     angles = ["front", "left", "right"]
-    # Record
-    video = recordVideo(drone, faces[0], angles[0])
+    # These are variable to adjust depending on whose face we are recording and which angle it is
+    face = 0
+    angle = 0
+    # Record vidoe and pictures
+    img_num = recordVideo(drone, faces[face], angles[angle])
+    # img_num should equal 10 after this meaning 10 photos were taken
 
-    while drone.get_y_location() <= y_boundary: # The snake path progressively moves towards the y_boundary which should be the end of its mission 
-        while drone.get_x_location() + x_step <= x_boundary: # Keep moving forward until the x_boundary is reached
-            drone.move(fwd=x_step)
-        if drone.get_y_location() + y_step <= y_boundary: # We should pass into here every time except when we are on the y_boundary
-            # Continue to the next row of the snake path search algorithm
-            drone.move(left=y_step)
-        else: # When here, we should be done with the mission, so exit the while loop
-            break
-        while drone.get_x_location() > 0: # Move all the way back to x=0
-            drone.move(back=x_step)
-        if drone.get_y_location() + y_step <= y_boundary: # We should pass into here every time except when we are on the y_boundary
-            # Continue to the next row of the snake path search algorithm
-            drone.move(left=y_step)
-        else: # When here, we should be done with the mission, so exit the while loop
-            break
+    while drone.get_z_location() + z_step <= z_boundary: # Keep going until we hit the ceiling boundary specified
+        while drone.get_y_location() <= y_boundary: # The snake path progressively moves towards the y_boundary which should be the end of its mission 
+            while drone.get_x_location() + x_step <= x_boundary: # Keep moving forward until the x_boundary is reached
+                drone.move(fwd=x_step)
+                img_num = recordVideo(drone, faces[face], angles[angle], img_num)
+            if drone.get_y_location() + y_step <= y_boundary: # We should pass into here every time except when we are on the y_boundary
+                # Continue to the next row of the snake path search algorithm
+                drone.move(left=y_step)
+                img_num = recordVideo(drone, faces[face], angles[angle], img_num)
+            else: # When here, we should be done with the mission, so exit the while loop
+                break
+            while drone.get_x_location() > 0: # Move all the way back to x=0
+                drone.move(back=x_step)
+                img_num = recordVideo(drone, faces[face], angles[angle], img_num)
+            if drone.get_y_location() + y_step <= y_boundary: # We should pass into here every time except when we are on the y_boundary
+                # Continue to the next row of the snake path search algorithm
+                drone.move(left=y_step)
+                img_num = recordVideo(drone, faces[face], angles[angle], img_num)
+            else: # When here, we should be done with the mission, so exit the while loop
+                break
+        drone.move(up=z_step)
+        img_num = recordVideo(drone, faces[face], angles[angle], img_num+1)
 
     print("\n >>>>>>>>>>>>>>>>OUTSIDE OF THE WHILE LOOP\n")
     drone.land()

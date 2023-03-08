@@ -20,7 +20,7 @@ class movement():
         self.video_stream = None
         self.takeoff(height, stream)
     
-    def takeoff(self, height=70, stream=True): 
+    def takeoff(self, height=100, stream=True): 
         '''Initializes and launches the drone and rises 40 cm as a default.'''
         self.drone.connect()
         sleep(1)
