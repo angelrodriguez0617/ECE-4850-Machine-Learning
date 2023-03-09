@@ -20,7 +20,7 @@ class movement():
         self.video_stream = None
         self.takeoff(height, stream)
     
-    def takeoff(self, height=100, stream=True): 
+    def takeoff(self, height=70, stream=True): 
         '''Initializes and launches the drone and rises 40 cm as a default.'''
         self.drone.connect()
         sleep(1)
@@ -34,7 +34,7 @@ class movement():
         self.drone.send_command_with_return("downvision 0")
         self.new_location[2] = self.drone.get_height()
         sleep(2)
-        self.move(up=height)
+        self.move(up=(height-self.new_location[2]))
         sleep(1)
     
     def video(self):
@@ -506,7 +506,7 @@ class movement():
         print(f"\nCURRENT LOCATION >>>>>>>>>>{self.new_location}\n")
 
 
-    def x_go_to (self, x_coordinate):
+    def x_go_to(self, x_coordinate):
         '''For when you want to go to an x-coordinate without changing y-coordinate nor angle in the process'''
         x_shift = self.get_x_location() - x_coordinate
         if x_shift < 0: # Meaning x_shift value is negative and so we want to move forward
@@ -514,7 +514,7 @@ class movement():
         else: # Meaning x_shift is positive and so we want to move to back
             self.move(back=x_shift)
 
-    def y_go_to (self, y_coordinate):
+    def y_go_to(self, y_coordinate):
         '''For when you want to go to an x-coordinate without changing y-coordinate nor angle in the process'''
         y_shift = self.get_y_location() - y_coordinate
         if y_shift < 0: # Meaning y_shift value is negative and so we want to move to the left
