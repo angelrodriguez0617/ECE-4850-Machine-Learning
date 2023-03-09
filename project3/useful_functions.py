@@ -3,8 +3,8 @@ import re
 import copy
 import random
 
-# this function takes the path to a text file and converts it into an array we can use for our work
 def convert_text_to_array(path):
+    '''this function takes the path to a text file and converts it into an array we can use for our work'''
     # open the file at the path and read it into a string
     with open(path) as file:
         content = file.read()
@@ -22,18 +22,20 @@ def convert_text_to_array(path):
     text = np.array(text)
     return text
 
-# calculates the log likelyhood the text occurs in the order it does based off of the supplied probability array
 def calculate_likelyhood(text, prob_array):
+    '''calculates the log likelyhood the text occurs in the order it does based off of the supplied probability array'''
     likelyhood = 0.0
     # intitial value is 0 (or ' ')
     old_char_iterator = 0
     # read each character from the text
     for i in text:
-        # get the "integer equivalent" (probably convert from ascii) of the character and adjust for our scheme
+        # get the "integer equivalent" (find Unicode) of the character and adjust for our scheme
         char_iterator = ord(i)
-        if char_iterator == 32:
+        if char_iterator == 32: # If the character is a space
+            # Assign 0 to space
             char_iterator = 0
         else:
+            # Latin Small Letter a is 97 in Unicode, we will have it be 1 and the rest of the alphabet to follow in order
             char_iterator = char_iterator - 96
         # the algorighm calls for us to take the all of the sequential likelyhoods
         # this number becomes very small and we are unable to work with it
@@ -43,9 +45,9 @@ def calculate_likelyhood(text, prob_array):
         # sets up for the next character
         old_char_iterator = char_iterator
     return likelyhood
-
-# swaps two random letters in our key
+ 
 def swap_char(key):
+    '''swaps two random letters in our key'''
     our_key = copy.copy(key)
     position = random.randrange(our_key.size)
     new_position = random.randrange(our_key.size)
@@ -57,8 +59,8 @@ def swap_char(key):
     # we also return which letters we swap to make things a little easier down the road
     return our_key, (our_key[new_position], our_key[position])
 
-# finds the conditional probability array (probabilty a certain character is followed by another) of a text
 def find_probability_array(text):
+    '''finds the conditional probability array (probabilty a certain character is followed by another) of a text'''
     # start with ones to avoid cases that we don't see in the text (maybe x really does follow q in our text, just very unlikely)
     unknown_prob_array = np.ones([27, 27])
     # the mapping of char to integer is "' ', a, b, c, ..., z" to "0, 1, 2, 3, ..., 26"
@@ -68,11 +70,13 @@ def find_probability_array(text):
     old_char_iterator = 0
     # read each character from the text
     for i in text:
-        # get the "integer equivalent" (probably convert from ascii) of the character and adjust for our scheme
+        # get the "integer equivalent" (find Unicode) of the character and adjust for our scheme
         char_iterator = ord(i)
-        if char_iterator == 32:
+        if char_iterator == 32: # If the character is a space
+            # Assign 0 to space
             char_iterator = 0
         else:
+            # Latin Small Letter a is 97 in Unicode, we will have it be 1 and the rest of the alphabet to follow in order
             char_iterator = char_iterator - 96
         # increment the probability array for each character
         unknown_prob_array[old_char_iterator, char_iterator] += 1
@@ -84,8 +88,8 @@ def find_probability_array(text):
         unknown_prob_array[i, :] /= normalizing_array[i]
     return unknown_prob_array
 
-# full fat translation of a text via decryption keys!
 def translate_text(text, key):
+    '''full fat translation of a text via decryption keys!'''
     # 'default' order of the alphabet
     original_index = np.array([' ', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'])
 
@@ -94,8 +98,8 @@ def translate_text(text, key):
         text[i] = key[list(original_index).index(text[i])]
     return text
 
-# a sneaky function that just swaps two letters in a text so we don't have to do a full translation
 def swap_text(text, swapped_chars):
+    '''a sneaky function that just swaps two letters in a text so we don't have to do a full translation'''
     # unwrap the characters we want to swap
     x1, x2 = swapped_chars
     # convert the array to a string
