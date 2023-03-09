@@ -68,4 +68,4 @@ class LiveFeed(threading.Thread):
         self.qr.set()
         self.haar.set()
         self.stop.set()
-        self.thread.join()
+        #self.thread.join()

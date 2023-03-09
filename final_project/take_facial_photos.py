@@ -13,7 +13,7 @@ faces = ["Angel", "Austin", "Shekaramiz"]
 # This will be used to specify which facial angle will be recorded
 angles = ["front", "left", "right"]
 # These are variable to adjust depending on whose face we are recording and which angle it is
-face = 0
+face = 1
 angle = 0
 
 path = "Default"
@@ -44,7 +44,7 @@ def recordVideo(video, face, angle, img_num=1):
 
 if __name__ == "__main__":
     # Initialize drone object and take off
-    drone = mov.movement(height=100)
+    drone = mov.movement(height=120)
     # Austin says this might work
     sleep(0.1)
 
@@ -57,18 +57,19 @@ if __name__ == "__main__":
     z_step = 30 # Steps the drone takes up
     x_boundary = 200 # X-axis boundary of path
     y_boundary = 150 # Y-axis boundary of path
-    z_boundary = 150 # Z-axis boundary of path
+    z_boundary = 200 # Z-axis boundary of path
 
     # Record video and pictures
     
     try:
+        
         frame_read = camera.get_frame_read()
         height, width, _ = frame_read.frame.shape
         video = cv.VideoWriter(f'{faces[face]}_{angles[angle]}_video.mp4', cv.VideoWriter_fourcc(*'mp4v'), 30, (width, height))
         video_thread = threading.Thread(target=recordVideo, args=(video, faces[face], angles[angle],))
         video_thread.start()
         # img_num should equal 10 after this meaning 10 photos were taken
-
+        
         temp_x_coordinate = drone.get_x_location()
         temp_y_coordinate = drone.get_y_location()
         print(drone.get_z_location())
@@ -93,7 +94,7 @@ if __name__ == "__main__":
             # Go to orignal location to repeat path
             drone.x_go_to(temp_x_coordinate)
             drone.y_go_to(temp_y_coordinate)
-
+ 
         print("\n >>>>>>>>>>>>>>>> OUTSIDE OF THE WHILE LOOP\n")
         video.release()
         drone.land(turn_off=True)
