@@ -6,7 +6,7 @@ import random
 def convert_text_to_array(path):
     '''this function takes the path to a text file and converts it into an array we can use for our work'''
     # open the file at the path and read it into a string
-    with open(path) as file:
+    with open(path, encoding='utf8') as file:
         content = file.read()
     # convert everything but alpha characters and whitespace to whitespace
     text = re.sub('[^a-zA-Z \n]', '', content)
@@ -62,6 +62,7 @@ def swap_char(key):
 def find_probability_array(text):
     '''finds the conditional probability array (probabilty a certain character is followed by another) of a text'''
     # start with ones to avoid cases that we don't see in the text (maybe x really does follow q in our text, just very unlikely)
+    # Never want to have probability of 1 for anything
     unknown_prob_array = np.ones([27, 27])
     # the mapping of char to integer is "' ', a, b, c, ..., z" to "0, 1, 2, 3, ..., 26"
 
@@ -83,8 +84,11 @@ def find_probability_array(text):
         # assign the old character iterator to repeat the cycle
         old_char_iterator = char_iterator
     # normalize the array
+    # Turn probability array into column vector in which each element is the sum of the entire row
     normalizing_array = np.sum(unknown_prob_array, axis=1)
     for i in range(27):
+        # Divide each each row in probability array by its sum
+        # This will make each row within the probability array add up to 1
         unknown_prob_array[i, :] /= normalizing_array[i]
     return unknown_prob_array
 
