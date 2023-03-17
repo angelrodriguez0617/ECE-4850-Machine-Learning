@@ -67,9 +67,10 @@ if __name__ == "__main__":
         video_thread = threading.Thread(target=extract_pictures, args=(video, faces[face], angles[angle]))
         video_thread.start()
 
-        while True: # Show the user live feed from drone until pressing ctrl + c
+        while True: # Continue showing live feed from drone until pressing ctrl + c
             frame_read = drone.get_frame_read()
             img = frame_read.frame
+            # Display output window showing the drone's camera live feed
             cv.imshow("Output", img)
             cv.waitKey(1)
 
