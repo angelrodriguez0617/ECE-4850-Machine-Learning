@@ -7,6 +7,9 @@ import cv2 as cv
 import shutil
 import threading
 import os
+from djitellopy import Tello
+import sys
+
 
 # This will be used to specify which person the recording will be of
 faces = ["Angel", "Austin", "Shekaramiz"] 
@@ -43,64 +46,39 @@ def recordVideo(video, face, angle, img_num=1):
     #return img_num
 
 if __name__ == "__main__":
-    # Initialize drone object and take off
-    drone = mov.movement(height=120)
+    # Initialize drone object and turn on
+    drone = Tello()
+    drone.connect()
+    drone.streamon()
     # Austin says this might work
     sleep(0.1)
 
-    camera = drone.get_drone()
+    camera = drone
     if camera.get_battery() < 20: # if battery is under 20%
         print("\n" + ">>>>>>>>>>>>>>>> DRONE BATTERY LOW. CHANGE BATTERY!")
-
-    x_step = 30 # Steps the drone takes fowards and backwards
-    y_step = 30 # Steps the drone takes left and right
-    z_step = 30 # Steps the drone takes up
-    x_boundary = 200 # X-axis boundary of path
-    y_boundary = 150 # Y-axis boundary of path
-    z_boundary = 200 # Z-axis boundary of path
 
     # Record video and pictures
     
     try:
-        
         frame_read = camera.get_frame_read()
         height, width, _ = frame_read.frame.shape
         video = cv.VideoWriter(f'{faces[face]}_{angles[angle]}_video.mp4', cv.VideoWriter_fourcc(*'mp4v'), 30, (width, height))
         video_thread = threading.Thread(target=recordVideo, args=(video, faces[face], angles[angle],))
         video_thread.start()
-        # img_num should equal 10 after this meaning 10 photos were taken
-        
-        temp_x_coordinate = drone.get_x_location()
-        temp_y_coordinate = drone.get_y_location()
-        print(drone.get_z_location())
-        while drone.get_z_location() + z_step <= z_boundary: # Keep going until we hit the ceiling boundary specified
-            while drone.get_y_location() <= y_boundary: # The snake path progressively moves towards the y_boundary which should be the end of its mission 
-                while drone.get_x_location() + x_step <= x_boundary: # Keep moving forward until the x_boundary is reached
-                    drone.move(fwd=x_step)
-                if drone.get_y_location() + y_step <= y_boundary: # We should pass into here every time except when we are on the y_boundary
-                    # Continue to the next row of the snake path search algorithm
-                    drone.move(left=y_step)
-                else: # When here, we should be done with the mission, so exit the while loop
-                    break
-                while drone.get_x_location() > 0: # Move all the way back to x=0, we are okay with the drone being a step behind x=0
-                    drone.move(back=x_step)
-                if drone.get_y_location() + y_step <= y_boundary: # We should pass into here every time except when we are on the y_boundary
-                    # Continue to the next row of the snake path search algorithm
-                    drone.move(left=y_step)
-                else: # When here, we should be done with the mission, so exit the while loop
-                    break
-            # Move up and repeat the process
-            drone.move(up=z_step)
-            # Go to orignal location to repeat path
-            drone.x_go_to(temp_x_coordinate)
-            drone.y_go_to(temp_y_coordinate)
- 
-        print("\n >>>>>>>>>>>>>>>> OUTSIDE OF THE WHILE LOOP\n")
-        video.release()
-        drone.land(turn_off=True)
+        # img_num should equal 10 after this meaning 10 photos were taken 
+
+        while True:
+            frame_read = camera.get_frame_read()
+            img = frame_read.frame
+            cv.imshow("Output", img)
+            cv.waitKey(1)
+
+        # video.release()
+        # sys.exit()
+
     except KeyboardInterrupt:
         video.release()
-        drone.land(turn_off=True)
+        sys.exit()
 
       
         
