@@ -14,10 +14,10 @@ import sys
 # This will be used to specify which person the recording will be of
 faces = ["Angel", "Austin", "Shekaramiz"] 
 # This will be used tos specify which facial angle will be recorded
-angles = ['smiling2', 'non-smiling6']
+angles = ['smiling2', 'non-smiling3']
 # These are variable to adjust depending on whose face we are recording and which angle it is
 face = 0
-angle = 1
+angle = 1 
 
 path = "Default"
 # Use current working directory
