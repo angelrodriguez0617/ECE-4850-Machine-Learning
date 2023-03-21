@@ -13,11 +13,11 @@ import sys
 
 # This will be used to specify which person the recording will be of
 faces = ["Angel", "Austin", "Shekaramiz"] 
-# This will be used to specify which facial angle will be recorded
-angles = ["front", "left", "right"]
+# This will be used tos specify which facial angle will be recorded
+angles = ['smiling2', 'non-smiling6']
 # These are variable to adjust depending on whose face we are recording and which angle it is
-face = 1
-angle = 0
+face = 0
+angle = 1
 
 path = "Default"
 # Use current working directory
@@ -55,8 +55,9 @@ if __name__ == "__main__":
     # Austin says this might work
     sleep(0.1)
 
+    print(f'>>>>>>>>>>>>>>>> DRONE BATTERY: {drone.get_battery()}')
     if drone.get_battery() < 20: # if battery is under 20%
-        print("\n" + ">>>>>>>>>>>>>>>> DRONE BATTERY LOW. CHANGE BATTERY!")
+        print(">>>>>>>>>>>>>>>> DRONE BATTERY LOW. CHANGE BATTERY!")
 
     try:
         frame_read = drone.get_frame_read()
