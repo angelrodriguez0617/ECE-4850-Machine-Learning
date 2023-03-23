@@ -126,9 +126,8 @@ plt.title(f"Energy of Chosen Paths (Lowest Energy = {int(np.amin(energy_list))})
 # Plot the temperature decrease over time
 plt.subplot(2, 2, 4)
 plt.plot(T_list)
-plt.title(f"Temperature Over Time")
-plt.text(10, 3, f'Starting Temperature: {T_list[0]}', fontsize='medium', weight="bold")
-plt.text(10, 1, f'Ending Temperature: {T_list[-1]}', fontsize='medium', weight="bold")
+format_T = "{:.3f}".format(T_list[-1])
+plt.title(f"Temperature Over Time (Starting = {T_list[0]}, Ending = {format_T})")
 
 # Plot the unoptimized path
 plt.subplot(2, 2, 1)
