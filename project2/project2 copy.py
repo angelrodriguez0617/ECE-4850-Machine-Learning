@@ -77,7 +77,8 @@ while np.amin(energy_list) > 500: # Lets always get an energy value in the 400s
                 delta_E = energy - energy_list[-1]
                 if np.exp(-delta_E/T) > u: # accept path
                     energy_list = np.append(energy_list, energy)
-                    iterator = new_iter.copy()                  
+                    iterator = new_iter.copy()
+                    T += 0.001                  
 
         # Always update T
         T *= T_decimation
