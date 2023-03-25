@@ -8,13 +8,13 @@ import sys
 
 
 # This will be used to specify which person the recording will be of
-faces = ["Angel_smiling", "Austin_smiling", "Shekaramiz_neutral", "wall"] 
+faces = ["Angel_smiling", "Austin_smiling", "Shekaramiz_smiling", "wall"] 
 # This will be used to specify which facial angle will be recorded
-angles = ["front", "left", "right"]
+angles = ["front", "left", "right, left_angle, right_angle"]
 # These are variable to adjust depending on whose face we are recording and which angle it is
-face = 0
-angle = "profile"
-
+face = 2
+angle = "right" 
+ 
 path = "Default"
 # Use current working directory
 # parent_directory = os.getcwd()
@@ -53,6 +53,7 @@ if __name__ == "__main__":
     drone = Tello()
     drone.connect()
     drone.streamon()
+
     # Austin says this might work
     sleep(0.1)
 
