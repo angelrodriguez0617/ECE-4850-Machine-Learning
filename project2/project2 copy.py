@@ -94,7 +94,7 @@ while np.amin(energy_list) > 500: # Lets always get an energy value in the 400s
         ax.quiver(xpath[:-1], ypath[:-1], xpath[1:]-xpath[:-1], 
                     ypath[1:]-ypath[:-1],scale_units='xy', angles='xy', scale=1, color='teal', width=0.005)
         # re-drawing the figure
-        plt.title("Traveling Salesman Path")
+        plt.title("Current Accepted Traveling Salesman Path")
         for i, j in zip(xpath, ypath): # Writes the (x,y) coordinates above the coordinate location
                 plt.text(i-4, j+1, '({}, {})'.format(i, j), fontsize='small')
         plt.text(60, 15, f'Energy: {int(energy)}', fontsize='medium', weight="bold")
