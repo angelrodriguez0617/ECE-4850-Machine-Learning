@@ -1,6 +1,7 @@
 import numpy as np
 def gendat2(class_num, num_points):
 
+        # First array contains x-coordinates and seconds array contains corresponding y-coordinates, for test data
     default_mean_array = np.array([[-0.132, 0.320, 1.672, 2.230, 1.217, -0.819, 3.629, 0.8210,
             1.808, 0.1700, -0.711, -1.726, 0.139, 1.151, -0.373, -1.573,
             -0.243, -0.5220, -0.511, 0.5330],
