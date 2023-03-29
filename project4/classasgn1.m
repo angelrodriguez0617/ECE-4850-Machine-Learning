@@ -1,4 +1,5 @@
 % classasgn1.m
+clc, clear, close all;
 % Sample classifier program
 % Load the training data and divide into the different classes
 load classasgntrain1.dat
@@ -33,6 +34,7 @@ Ntest1 = 5000; % number of class 1 points to generate
 xtest0 = gendat2(0,Ntest0); % generate the test data for class 0 
 xtest1 = gendat2(1,Ntest1); % generate the test data for class 1 
 nerr = 0;
+temp = xtest0(:,1)
 for i=1:Ntest0
 yhat = [1 xtest0(:,i)']*Bhat;
 if(yhat(2) > yhat(1)) % error: chose class 1 over class 0 
