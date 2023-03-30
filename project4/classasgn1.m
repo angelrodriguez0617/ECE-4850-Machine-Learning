@@ -32,7 +32,14 @@ errrate_linregress_train = nerr / N;
 Ntest0 = 5000; % number of class 0 points to generate
 Ntest1 = 5000; % number of class 1 points to generate
 xtest0 = gendat2(0,Ntest0); % generate the test data for class 0 
-xtest1 = gendat2(1,Ntest1); % generate the test data for class 1 
+xtest1 = gendat2(1,Ntest1); % generate the test data for class 1
+
+%# create file, and write the title and number of columns
+fid = fopen('outputFile.dat', 'wt');
+fclose(fid);
+%# append rest of data
+dlmwrite('outputFile.dat', [xtest0' xtest1'], '-append', 'delimiter','\t')
+
 nerr = 0;
 for i=1:Ntest0
 yhat = [1 xtest0(:,i)']*Bhat;
