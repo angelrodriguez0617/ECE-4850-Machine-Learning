@@ -10,7 +10,7 @@ N1 = size(x1,2);
 N = N0 + N1;
 % plot the data
 clf;
-plot(x0(1,:), x0(2,:),'gx');
+plot(x0(1,:), x0(2,:),'go');
 hold on;
 plot(x1(1,:), x1(2,:),'ro');
 xlabel('x_0');
