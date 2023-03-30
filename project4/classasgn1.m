@@ -34,7 +34,6 @@ Ntest1 = 5000; % number of class 1 points to generate
 xtest0 = gendat2(0,Ntest0); % generate the test data for class 0 
 xtest1 = gendat2(1,Ntest1); % generate the test data for class 1 
 nerr = 0;
-temp = xtest0(:,1)
 for i=1:Ntest0
 yhat = [1 xtest0(:,i)']*Bhat;
 if(yhat(2) > yhat(1)) % error: chose class 1 over class 0 
@@ -67,4 +66,8 @@ for x = xpl
  end
 end
 plot(greenpts(1,:), greenpts(2,:),'g.','MarkerSize',0.25);
-plot(redpts(1,:),redpts(2,:),'r.','MarkerSize',0.25); axis tight
+plot(redpts(1,:),redpts(2,:),'r.','MarkerSize',0.25);
+% Plot training data
+plot(xtest0(1,:), xtest0(2,:), 'gx','MarkerSize',1);
+plot(xtest1(1,:), xtest0(2,:), 'ro','MarkerSize',1);
+axis tight
