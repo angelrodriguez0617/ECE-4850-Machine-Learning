@@ -12,22 +12,25 @@ def gendat2_angel(class_num, num_points):
                    [2.065, 2.441, 0.247, 1.806, 1.286, 0.928,1.923, 0.1299, 1.847, -0.052]])
     
     x = np.array([[],[]])
+    my_array = np.array([[],[]])
     for i in range(num_points):
         idx = math.floor(10 * (random.random())) # indexes 0-9
-        if class_num:
+        if not class_num:
             m = m0[:,idx]
         else:
             m = m1[:,idx]
+        # print(f'm: {m.shape}')
         # my_array = np.array([[m[0] + random.random() / math.sqrt(5)], 
         #                       [m[1] + random.random() / math.sqrt(5)]])
-        my_array = ([[],[]])
         my_array = np.array([np.add(m, np.random.random(size=(2)) / math.sqrt(5))]).T
+        # print(f'my_array: {my_array.shape}')
+        # print(my_array)
         x = np.append(x, my_array, axis=1)
     return x
 
 # For testing function
-Ntest0 = 5000 # number of class 0 points to generate
-Ntest1 = 5000 # number of class 1 points to generate
+Ntest0 = 1 # number of class 0 points to generate
+Ntest1 = 1 # number of class 1 points to generate
 xtest0 = gendat2_angel(0,Ntest0) # generate the test data for class 0 
 xtest1 = gendat2_angel(1,Ntest1) # generate the test data for class 1 
 print(f'xtest0: {xtest0.shape}')
