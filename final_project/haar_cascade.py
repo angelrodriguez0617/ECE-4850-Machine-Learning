@@ -72,6 +72,10 @@ if __name__ == "__main__":
 
     img, info = my_video_stream.image, my_video_stream.info
     
+    x, y = info[0]  # The x and y location of the center of the bounding box in the frame
+    area = info[1]  # The area of the bounding box
+    width = info[2] # The width of the bounding box
+
     while True:
         if info[0][0]: # Face is detected
             drone.takeoff()
