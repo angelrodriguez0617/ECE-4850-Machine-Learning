@@ -4,6 +4,7 @@ import numpy as np
 from djitellopy import Tello
 import multiprocessing
 import time
+import matplotlib.pyplot as plt
 
 class VideoStream:
     def __init__(self, drone):
@@ -16,7 +17,7 @@ class VideoStream:
         '''Output live video feed of the drone to user'''    
         while True: # Infinite while loop to output the live video feed indefinetly 
             self.frame = self.drone.get_frame_read()
-            img_ro = self.frame.frame
+            self._read_only_image = self.frame.frame
             # Display output window showing the drone's camera frames
             #cv2.imshow("Output", img_ro)
             #cv2.waitKey(1)
@@ -28,18 +29,18 @@ if __name__ == "__main__":
     drone = Tello()
     drone.connect()
     drone.streamon()
-    img = drone.get_frame_read().frame
-    drone.streamoff()~
-    #my_video_stream = VideoStream(drone)
+    my_video_stream = VideoStream(drone)
 
-    #time.sleep(5)
+    time.sleep(1)
 
-    #img = my_video_stream.get_img()
+    img = my_video_stream.get_img()
     
     print(img)
 
-    cv2.imshow("Output", img)
-    cv2.waitKey(0)
+    plt.imshow(img)
+    plt.show()
+    drone.streamoff()
+    os._exit(0)
 
 # def find_face(img):
 #     '''Take an input image and searches for the target object using an xml file. 
