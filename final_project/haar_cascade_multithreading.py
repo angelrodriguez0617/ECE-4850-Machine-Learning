@@ -9,21 +9,23 @@ import matplotlib.pyplot as plt
 class VideoStream:
     def __init__(self, drone):
           self.drone = drone
-          self._read_only_image = None
-          self._drone_video_process_obj = multiprocessing.Process(target=self._init_drone_video_process)
+          self._pipein, self._pipeout = multiprocessing.Pipe()
+          self._drone_video_process_obj = multiprocessing.Process(target=self._init_drone_video_process, args=(self._pipein,))
           self._drone_video_process_obj.start()
 
-    def _init_drone_video_process(self):
+    def _init_drone_video_process(self, pipein):
         '''Output live video feed of the drone to user'''    
-        while True: # Infinite while loop to output the live video feed indefinetly 
-            self.frame = self.drone.get_frame_read()
-            self._read_only_image = self.frame.frame
+        while True: # Infinite while loop to output the live video feed indefinetly
+            time.sleep(1)
+            print("sending frame")
+            pipein.send(self.drone.get_frame_read().frame)
             # Display output window showing the drone's camera frames
             #cv2.imshow("Output", img_ro)
             #cv2.waitKey(1)
 
     def get_img(self):
-        return self._read_only_image
+        print("recieving frame")
+        return self._pipeout.recv()
 
 if __name__ == "__main__":
     drone = Tello()
@@ -31,7 +33,7 @@ if __name__ == "__main__":
     drone.streamon()
     my_video_stream = VideoStream(drone)
 
-    time.sleep(1)
+    time.sleep(5)
 
     img = my_video_stream.get_img()
     
