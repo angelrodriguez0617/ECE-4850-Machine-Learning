@@ -12,6 +12,7 @@ class VideoStream:
           self._queue = multiprocessing.Queue()
           self._drone_video_process_obj = multiprocessing.Process(target=self._init_drone_video_process, args=(self._queue,))
           self._drone_video_process_obj.start()
+          self._my_photo = None
 
     def _init_drone_video_process(self, frame_queue):
         '''Continually pushes a photo to an available queue'''    
@@ -26,7 +27,9 @@ class VideoStream:
             time.sleep(1/60)
 
     def get_img(self):
-        return self._queue.get()
+        if not self._queue.empty():
+            self._my_photo = self._queue.get()
+        return self._my_photo
     
     def end(self):
         self._queue.close()
