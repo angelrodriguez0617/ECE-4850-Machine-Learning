@@ -9,23 +9,29 @@ import matplotlib.pyplot as plt
 class VideoStream:
     def __init__(self, drone):
           self.drone = drone
-          self._pipein, self._pipeout = multiprocessing.Pipe()
-          self._drone_video_process_obj = multiprocessing.Process(target=self._init_drone_video_process, args=(self._pipein,))
+          self._queue = multiprocessing.Queue()
+          self._drone_video_process_obj = multiprocessing.Process(target=self._init_drone_video_process, args=(self._queue,))
           self._drone_video_process_obj.start()
 
-    def _init_drone_video_process(self, pipein):
-        '''Output live video feed of the drone to user'''    
-        while True: # Infinite while loop to output the live video feed indefinetly
-            time.sleep(1)
+    def _init_drone_video_process(self, frame_queue):
+        '''Continually pushes a photo to an available queue'''    
+        while True:
+            # empty the queue
+            while not frame_queue.empty():
+                frame_queue.get()
             print("sending frame")
-            pipein.send(self.drone.get_frame_read().frame)
-            # Display output window showing the drone's camera frames
-            #cv2.imshow("Output", img_ro)
-            #cv2.waitKey(1)
+            # push a photo from the tello to the frame
+            frame_queue.put(self.drone.get_frame_read().frame)
+            # delay so that we can send other commands to the tello
+            time.sleep(1/60)
 
     def get_img(self):
-        print("recieving frame")
-        return self._pipeout.recv()
+        return self._queue.get()
+    
+    def end(self):
+        self._queue.close()
+        self._drone_video_process_obj.close()
+        print("Ending VideoStream")
 
 if __name__ == "__main__":
     drone = Tello()
@@ -41,6 +47,7 @@ if __name__ == "__main__":
 
     plt.imshow(img)
     plt.show()
+    my_video_stream.end()
     drone.streamoff()
     os._exit(0)
 
