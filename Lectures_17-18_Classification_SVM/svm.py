@@ -20,8 +20,8 @@ for img in os.listdir(path):
     imgpath = os.path.join(path,img)
     try:
         pet_img = cv.imread(imgpath,0)
-        cv.imshow('image', pet_img)
-        sleep(1)
+        # cv.imshow('image', pet_img)
+        # sleep(1)
         pet_img = cv.resize(pet_img,(100,100))
         image = np.array(pet_img).flatten()
         data.append([image, label])
