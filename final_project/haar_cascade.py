@@ -16,7 +16,7 @@ def find_face(img):
     as well as the area of the detection boundary.'''
 
     # Use Haar Cascades to detect objects using the built-in classifier tool
-    cascade = cv.CascadeClassifier("Haarcascade_frontalface_default.xml")
+    cascade = cv.CascadeClassifier("haarcascade_frontalface_default.xml")
 
     gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
     faces = cascade.detectMultiScale(gray, 1.2, 8)

@@ -13,8 +13,11 @@ import os
 CWD = os.getcwd()
 
 class movement():
-    def __init__(self, height=70, stream=True):
-        self.drone = Tello()               # Drone class initialized by calling: drone = Tello()
+    def __init__(self, height=70, stream=True, tello=None):
+        if tello is None:
+            self.drone = Tello()
+        else:
+            self.drone = tello              # Drone class initialized by calling: drone = Tello()
         self.new_location = [0, 0, 0, 0]   # [x location, y location, z location, angle]
         self.turbine_locations = []        # List of all known turbine locations
         self.video_stream = None
