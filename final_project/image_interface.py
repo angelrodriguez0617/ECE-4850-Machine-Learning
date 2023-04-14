@@ -4,7 +4,6 @@ from downvision_calibration import calibrate
 from time import sleep
 import math
 import cv2 as cv
-from qr_reader import droneReadQR
 from check_camera import check_camera
 import haar_cascade as hc
 import mission
@@ -55,12 +54,14 @@ def trackObject(drone, info, starting_location, flag_rotate=0, flag_shift=0, fla
     width = info[2] # The width of the bounding box
     img_pass = 0    # Flag to determine if the drone is returning from a target to skip point distance calculations
 
-    # Angel - declare variable to be the distance we want to stop short in the x-axis
-    x_distance_cutoff = 60
+    # How close to the drone are you comfortable with? 
+    x_distance_cutoff = 100
 
     # object detected
     if(x != 0):
-        distance = int((650 * 16.51) / width) - 40 # (Focal length of camera lense * Real-world width of object)/Width of object in pixels  -  40 centimeters to stop short
+        # (Focal length of camera lense * Real-world width of object)/Width of object in pixels
+        # About 22 cm correctly calculates the distance of my face, feel free to revise to work with you
+        distance = int((650 * 22) / width) 
         if distance < 20:
             distance = 20
 
@@ -83,21 +84,18 @@ def trackObject(drone, info, starting_location, flag_rotate=0, flag_shift=0, fla
                 flag_rotate = 0
                 flag_shift_direction = "left" 
             info = check_camera(camera)      
-            target_qr_found = trackObject(drone, info, starting_location, flag_rotate,  flag_shift, flag_shift_direction)
+            target_found = trackObject(drone, info, starting_location, flag_rotate,  flag_shift, flag_shift_direction)
             print("Leaving trackObject function on line 109 in image_interface")
             img_pass = 1
             # Maybe this will work, we need to continue trying to find the turbine we missed by returning False
-            if target_qr_found == False:
-                return False
+            if not target_found:
+                return target_found
 
         elif(x >= 380):
             # The drone needs to angle to the right to center the target.
             new_angle = int(round(((x - 360) / 360) * 41.3))
             target_angle = drone.get_angle()-new_angle
             if target_angle < 0: target_angle += 360
-
-            targetx = drone.get_x_location() + distance * math.cos(math.radians(target_angle))
-            targety = drone.get_y_location() + distance * math.sin(math.radians(target_angle))
 
             print("new_angle: " , new_angle)
             shift = numpy.abs(distance * numpy.sin(new_angle * numpy.pi/180))
@@ -114,19 +112,17 @@ def trackObject(drone, info, starting_location, flag_rotate=0, flag_shift=0, fla
                 flag_rotate = 0
                 flag_shift_direction = "right"  
             info = check_camera(camera)       
-            target_qr_found = trackObject(drone, info, starting_location, flag_rotate,  flag_shift, flag_shift_direction)
+            target_found = trackObject(drone, info, starting_location, flag_rotate,  flag_shift, flag_shift_direction)
             print("Leaving trackObject function on line 144 in image_interface")
             img_pass = 1
             # Maybe this will work, we need to continue trying to find the turbine we missed by returning False
-            if target_qr_found == False:
-                return False
+            if not target_found:
+                return target_found
 
         if area > fbRange[0] and area < fbRange[1] and img_pass == 0:
-            # The drone has approached the target and will scan for a QR code 
-            print("Leaving qr_detection function on line 148 in image_interface")
-            if target_qr_found == False: # Incorrect QR code was scanned
-                return False
-            return True
+            # The drone has approached the target and will stay put
+            print(">>>>>>>>>> DRONE WILL STAY PUT")
+            return target_found
 
         elif area > fbRange[1] and img_pass == 0:
             # The drone is too close to the target
@@ -152,9 +148,7 @@ def trackObject(drone, info, starting_location, flag_rotate=0, flag_shift=0, fla
                 print(f"Flight time: {flight_time}")
             except:
                 print("Printing statement failed")
-            if target_qr_found == False: 
-                return False
-            return True
+            return target_found
 
    
         

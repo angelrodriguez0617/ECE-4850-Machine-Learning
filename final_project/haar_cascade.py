@@ -67,4 +67,8 @@ if __name__ == "__main__":
         width = info[2] # The width of the bounding box
 
         if info[0][0]:
-            print('>>>>>>>>>> FACE DETECTED')
+            # print('>>>>>>>>>> FACE DETECTED')
+            # (Focal length of camera lense * Real-world width of object)/Width of object in pixels
+            # About 22 cm correctly calculates the distance of my face, feel free to revise to work with you
+            distance = int((650 * 22) / width)
+            print(f'distance: {distance}')
