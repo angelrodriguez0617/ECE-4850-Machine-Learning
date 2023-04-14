@@ -39,9 +39,6 @@ if __name__ == "__main__":
     
     # Close the window
     cv.destroyWindow("Output")
-    
-    # Closing the video stream
-    drone.streamoff()
 
     # Set height of drone to match height of person's face to track
     drone = mov.movement(tello=drone)

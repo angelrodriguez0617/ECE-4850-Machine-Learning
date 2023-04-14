@@ -64,19 +64,24 @@ if __name__ == "__main__":
     drone.connect()
     drone.streamon()
 
-    my_video_stream = MyVideoStream(drone)
+    # Display battery level
+    battery = drone.get_battery()
+    print(f'>>>>>>>>>> DRONE BATTERY: {battery}')
+    if battery < 20:
+        print('>>>>>>>>>> CHANGE DRONE BATTERY')
 
-    # Show the user the video stream using threading
-    video_thread = threading.Thread(target=my_video_stream.output_video)
-    video_thread.start()
+    # While loop to output the live video feed
+    while True: # Output live video feed of the drone to user until face has been detected a certein number of times    
+        frame = drone.get_frame_read()
+        img = frame.frame
+        img, info = find_face(img)
+        # Display output window showing the drone's camera frames
+        cv.imshow("Output", img)
+        cv.waitKey(1)
 
-    img, info = my_video_stream.image, my_video_stream.info
-    
-    x, y = info[0]  # The x and y location of the center of the bounding box in the frame
-    area = info[1]  # The area of the bounding box
-    width = info[2] # The width of the bounding box
+        x, y = info[0]  # The x and y location of the center of the bounding box in the frame
+        area = info[1]  # The area of the bounding box
+        width = info[2] # The width of the bounding box
 
-    while True:
-        if info[0][0]: # Face is detected
-            drone.takeoff()
-
+        if info[0][0]:
+            print('>>>>>>>>>> FACE DETECTED')
