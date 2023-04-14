@@ -5,6 +5,8 @@ from haar_cascade import find_face
 import cv2 as cv
 from djitellopy import Tello
 import movement as mov
+from check_camera import check_camera
+from image_interface import trackObject
 
 if __name__ == "__main__":
     drone = Tello()
@@ -43,6 +45,8 @@ if __name__ == "__main__":
     # Set height of drone to match height of person's face to track
     drone = mov.movement(tello=drone)
     drone.move(fwd=20)
+    info = check_camera(drone)  
+    found = trackObject(drone, info, [drone.get_x_location(), drone.get_y_location(), drone.get_angle()])  
 
     
 
