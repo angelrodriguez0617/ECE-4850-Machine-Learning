@@ -42,23 +42,6 @@ def find_face(img):
     else:
         return img, [[0, 0], 0, 0]
 
-class MyVideoStream:
-    def __init__(self, drone):
-          self.drone = drone
-          self.frame = 0
-          self.info = np.array(([0],[0]))
-          self.image = None
-
-    def output_video(self):
-        '''Output live video feed of the drone to user'''    
-        while True: # Infinite while loop to output the live video feed indefinetly 
-            self.frame = self.drone.get_frame_read()
-            img = self.frame.frame
-            self.img, self.info = find_face(img)
-            # Display output window showing the drone's camera frames
-            cv.imshow("Output", img)
-            cv.waitKey(1)
-
 if __name__ == "__main__":
     drone = Tello()
     drone.connect()
