@@ -144,11 +144,12 @@ def trackObject(drone, info, starting_location, flag_rotate=0, flag_shift=0, fla
                         drone.move(fwd=distance)
                         distance -= distance
             try:
-                flight_time = drone.get_flight_time()
+                flight_time = camera.get_flight_time()
                 print(f"Flight time: {flight_time}")
             except:
                 print("Printing statement failed")
-            return target_found
+            camera.flip('f')
+            return True
 
    
         

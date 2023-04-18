@@ -9,12 +9,12 @@ from check_camera import check_camera
 from image_interface import trackObject
 
 if __name__ == "__main__":
-    drone = Tello()
-    drone.connect()
-    drone.streamon()
+    tello = Tello()
+    tello.connect()
+    tello.streamon()
 
     # Display battery level
-    battery = drone.get_battery()
+    battery = tello.get_battery()
     print(f'>>>>>>>>>> DRONE BATTERY: {battery}')
     if battery < 20:
         print('>>>>>>>>>> CHANGE DRONE BATTERY')
@@ -24,7 +24,7 @@ if __name__ == "__main__":
 
     # While loop to output the live video feed
     while count > 0: # Output live video feed of the drone to user until face has been detected a certein number of times    
-        frame = drone.get_frame_read()
+        frame = tello.get_frame_read()
         img = frame.frame
         img, info = find_face(img)
         # Display output window showing the drone's camera frames
@@ -43,9 +43,11 @@ if __name__ == "__main__":
     cv.destroyWindow("Output")
 
     # Set height of drone to match height of person's face to track
-    drone = mov.movement(tello=drone)
-    info = check_camera(drone)  
-    found = trackObject(drone, info, [drone.get_x_location(), drone.get_y_location(), drone.get_angle()])  
+    drone = mov.movement(tello=tello)
+    info = check_camera(drone.get_drone())  
+    for i in range(3):
+        found = trackObject(drone, info, [drone.get_x_location(), drone.get_y_location(), drone.get_angle()]) 
+        print(f'>>>>>>>>>> found: ')
 
     
 

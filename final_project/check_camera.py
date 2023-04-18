@@ -6,10 +6,10 @@ from djitellopy import tello
 
 w, h = 720, 480 # display size of the screen
 
-def check_camera(drone):
+def check_camera(our_drone):
     '''Takes the lower drone class frome drone.get_drone() and returns
     the information of the haar-cascade detection.'''
-    frame = drone.get_frame_read()
+    frame = our_drone.get_frame_read()
     sleep(0.2)
     img = frame.frame
     img = cv.resize(img, (w, h))

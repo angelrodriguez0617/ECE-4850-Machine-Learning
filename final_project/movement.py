@@ -114,19 +114,49 @@ class movement():
         sleep(0.3)
         start_height = self.drone.get_height()
 
+        # Angel - round all values
+        up = round(up)
+        down = round(down)
+        right = round(right)
+        left = round(left)
+
         # Angel - account for negative values
         if right < 0:
             left = -right
-            right =0
+            right = 0
         if left < 0:
             right = -left
             left = 0
+        if up < 0:
+            down = -up
+            up = 0
+        if down < 0:
+            up = -down
+            down = 0
+
+        # Angel - account for small values which would be out of range
+        if up < 10:
+            up = 0
+        elif  10 <= up < 20:
+            up = 20 
+        if down < 10:
+            down = 0
+        elif  10 <= down < 20:
+            down = 20 
+        if left < 10:
+            left = 0
+        elif  10 <= left < 20:
+            left = 20 
+        if right < 10:
+            right = 0
+        elif  10 <= right < 20:
+            right = 20 
             
         if up != 0:
             # increases drone altitude
-            up = round(up)
             self.drone.move_up(up)
             self.new_location[2] += up
+
 
         elif up == 0 and down != 0:
             # decreases drone altitiude
