@@ -52,7 +52,7 @@ def trackObject(drone, info, starting_location, flag_rotate=0, flag_shift=0, fla
     elif info[0][0] == 0 and flag_shift != 0 and flag_shift_direction == "down":
         drone.move(up=flag_shift)
         trackObject(drone, info, starting_location, flag_shift)
-    elif info[0][0] == 0:
+    elif info[0][0] == 0: # Object not detected
         while info[0][0] == 0: # Going to keep rotating until a person is detected
             drone.move(cw=90)
             info = check_camera(camera)[1]
@@ -65,7 +65,7 @@ def trackObject(drone, info, starting_location, flag_rotate=0, flag_shift=0, fla
     img_pass = 0    # Flag to determine if the drone is returning from a target to skip point distance calculations
 
     # How close to the drone are you comfortable with? 
-    x_distance_cutoff = 100
+    x_distance_cutoff = 200
 
     # object detected
     if(x != 0):
@@ -75,7 +75,7 @@ def trackObject(drone, info, starting_location, flag_rotate=0, flag_shift=0, fla
         if distance < 100: # The drone is too close to face, move back
             drone.move(back=20)
 
-        print(f'y position: {y}')
+        # print(f'y position: {y}')
         if(0 < y <= 200): # The drone needs to move down to center the target
             drone.move(down=20)
             # info = check_camera(camera)[1]
@@ -133,11 +133,10 @@ def trackObject(drone, info, starting_location, flag_rotate=0, flag_shift=0, fla
                 flag_shift_direction = "right"  
             info = check_camera(camera)[1]       
             target_found = trackObject(drone, info, starting_location, flag_rotate,  flag_shift, flag_shift_direction)
-            print("Leaving trackObject function on line 144 in image_interface")
+            print("Leaving trackObject function on line 136 in image_interface")
             img_pass = 1
             # Maybe this will work, we need to continue trying to find the turbine we missed by returning False
-            if not target_found:
-                return target_found
+            return target_found
 
         if area > fbRange[0] and area < fbRange[1] and img_pass == 0:
             # The drone has approached the target and will stay put
@@ -170,6 +169,5 @@ def trackObject(drone, info, starting_location, flag_rotate=0, flag_shift=0, fla
                 print("Printing statement failed")
             camera.flip('f')
             return True
-
    
         
