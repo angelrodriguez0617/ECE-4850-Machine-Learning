@@ -37,17 +37,27 @@ def trackObject(drone, info, starting_location, flag_rotate=0, flag_shift=0, fla
     # if we did not find the center after finding it previously and our last command was a rotate. Rotate the same degree in the opposite direction
     if info[0][0] == 0 and flag_rotate != 0:
         drone.move(ccw=flag_rotate)
-        trackObject(drone, info, starting_location, flag_rotate)
+        trackObject(drone, info, starting_location)
     # if we did not find the center after finding it previously and our last command was a shift left. Move right the same distance.
     elif info[0][0] == 0 and flag_shift != 0 and flag_shift_direction == "left":
         drone.move(right=flag_shift)
-        trackObject(drone, info, starting_location, flag_shift)
+        trackObject(drone, info, starting_location)
     # if we did not find the center after finding it previously and our last command was a shift right. Move left the same distance.
     elif info[0][0] == 0 and flag_shift != 0 and flag_shift_direction == "right":
         drone.move(left=flag_shift)
+        trackObject(drone, info, starting_location)
+    elif info[0][0] == 0 and flag_shift != 0 and flag_shift_direction == "up":
+        drone.move(down=flag_shift)
+        trackObject(drone, info, starting_location)
+    elif info[0][0] == 0 and flag_shift != 0 and flag_shift_direction == "down":
+        drone.move(up=flag_shift)
         trackObject(drone, info, starting_location, flag_shift)
     elif info[0][0] == 0:
-        return False
+        while info[0][0] == 0: # Going to keep rotating until a person is detected
+            drone.move(cw=90)
+            info = check_camera(camera)
+        # We break out of the while loop when an object is detected
+        trackObject(drone, info, starting_location)
 
     area = info[1]  # The area of the bounding box
     x, y = info[0]  # The x and y location of the center of the bounding box in the frame
@@ -62,8 +72,18 @@ def trackObject(drone, info, starting_location, flag_rotate=0, flag_shift=0, fla
         # (Focal length of camera lense * Real-world width of object)/Width of object in pixels
         # About 22 cm correctly calculates the distance of my face, feel free to revise to work with you
         distance = int((650 * 22) / width) 
-        if distance < 20:
-            distance = 20
+        if distance < 100: # The drone is too close to face, move back
+            drone.move(back=20)
+
+        print(f'y position: {y}')
+        if(0 < y <= 200): # The drone needs to move down to center the target
+            drone.move(down=20)
+            info = check_camera(camera)
+            target_found = trackObject(drone, info, starting_location, flag_rotate,  flag_shift=20, flag_shift_direction="down")
+        elif (y >= 300): # The drone needs to move up to center the target
+            drone.move(up=20)
+            info = check_camera(camera)
+            target_found = trackObject(drone, info, starting_location, flag_rotate,  flag_shift=20, flag_shift_direction="up")
 
         if(0 < x <= 340):
             # The drone needs to angle to the left to center the target.

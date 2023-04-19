@@ -31,7 +31,8 @@ def find_face(img):
         cv.rectangle(img, (x, y), (x + w, y + h), (0, 0, 255), 2)
         # determine the center of the detection boundaries and the area
         centerX = x + w // 2
-        centerY = y + h // 2
+        centerY = h - (y + h // 2)
+        print(f'centerY: {centerY}')
         area = w * h
         faceListC.append([centerX, centerY])
         faceListArea.append(area)
@@ -66,9 +67,9 @@ if __name__ == "__main__":
         area = info[1]  # The area of the bounding box
         width = info[2] # The width of the bounding box
 
-        if info[0][0]:
+        if info[0][0]: # Face detected
             # print('>>>>>>>>>> FACE DETECTED')
             # (Focal length of camera lense * Real-world width of object)/Width of object in pixels
             # About 22 cm correctly calculates the distance of my face, feel free to revise to work with you
             distance = int((650 * 22) / width)
-            print(f'distance: {distance}')
+            # print(f'distance: {distance}')
