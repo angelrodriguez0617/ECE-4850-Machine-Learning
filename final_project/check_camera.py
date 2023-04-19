@@ -14,4 +14,5 @@ def check_camera(our_drone):
     img = frame.frame
     img = cv.resize(img, (w, h))
     img, info = hc.find_face(img)
-    return info
+    # return info
+    return img, info

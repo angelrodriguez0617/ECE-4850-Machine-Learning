@@ -55,7 +55,7 @@ def trackObject(drone, info, starting_location, flag_rotate=0, flag_shift=0, fla
     elif info[0][0] == 0:
         while info[0][0] == 0: # Going to keep rotating until a person is detected
             drone.move(cw=90)
-            info = check_camera(camera)
+            info = check_camera(camera)[1]
         # We break out of the while loop when an object is detected
         trackObject(drone, info, starting_location)
 
@@ -71,19 +71,19 @@ def trackObject(drone, info, starting_location, flag_rotate=0, flag_shift=0, fla
     if(x != 0):
         # (Focal length of camera lense * Real-world width of object)/Width of object in pixels
         # About 22 cm correctly calculates the distance of my face, feel free to revise to work with you
-        distance = int((650 * 22) / width) 
+        distance = int((650 * 18.5) / width) 
         if distance < 100: # The drone is too close to face, move back
             drone.move(back=20)
 
         print(f'y position: {y}')
         if(0 < y <= 200): # The drone needs to move down to center the target
             drone.move(down=20)
-            info = check_camera(camera)
-            target_found = trackObject(drone, info, starting_location, flag_rotate,  flag_shift=20, flag_shift_direction="down")
+            # info = check_camera(camera)[1]
+            # target_found = trackObject(drone, info, starting_location, flag_rotate,  flag_shift=20, flag_shift_direction="down")
         elif (y >= 300): # The drone needs to move up to center the target
             drone.move(up=20)
-            info = check_camera(camera)
-            target_found = trackObject(drone, info, starting_location, flag_rotate,  flag_shift=20, flag_shift_direction="up")
+            # info = check_camera(camera)[1]
+            # target_found = trackObject(drone, info, starting_location, flag_rotate,  flag_shift=20, flag_shift_direction="up")
 
         if(0 < x <= 340):
             # The drone needs to angle to the left to center the target.
@@ -103,7 +103,7 @@ def trackObject(drone, info, starting_location, flag_rotate=0, flag_shift=0, fla
                 flag_shift = shift
                 flag_rotate = 0
                 flag_shift_direction = "left" 
-            info = check_camera(camera)      
+            info = check_camera(camera)[1]      
             target_found = trackObject(drone, info, starting_location, flag_rotate,  flag_shift, flag_shift_direction)
             print("Leaving trackObject function on line 109 in image_interface")
             img_pass = 1
@@ -131,7 +131,7 @@ def trackObject(drone, info, starting_location, flag_rotate=0, flag_shift=0, fla
                 flag_shift = shift
                 flag_rotate = 0
                 flag_shift_direction = "right"  
-            info = check_camera(camera)       
+            info = check_camera(camera)[1]       
             target_found = trackObject(drone, info, starting_location, flag_rotate,  flag_shift, flag_shift_direction)
             print("Leaving trackObject function on line 144 in image_interface")
             img_pass = 1
@@ -147,7 +147,7 @@ def trackObject(drone, info, starting_location, flag_rotate=0, flag_shift=0, fla
         elif area > fbRange[1] and img_pass == 0:
             # The drone is too close to the target
             drone.move(back=20)
-            info = check_camera(camera)
+            info = check_camera(camera)[1]
             trackObject(drone, info, starting_location)
             print("Leaving trackObject function on line 156 in image_interface")
 
@@ -161,8 +161,8 @@ def trackObject(drone, info, starting_location, flag_rotate=0, flag_shift=0, fla
                         drone.move(fwd=500)
                         distance -= 500
                     else:
-                        drone.move(fwd=distance)
-                        distance -= distance
+                        drone.move(fwd = distance - x_distance_cutoff)
+                        distance -= distance - x_distance_cutoff
             try:
                 flight_time = camera.get_flight_time()
                 print(f"Flight time: {flight_time}")

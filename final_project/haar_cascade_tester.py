@@ -8,6 +8,8 @@ import movement as mov
 from check_camera import check_camera
 from image_interface import trackObject
 
+# w, h = 720, 480 # display size of the screen
+
 if __name__ == "__main__":
     tello = Tello()
     tello.connect()
@@ -26,7 +28,8 @@ if __name__ == "__main__":
     while count > 0: # Output live video feed of the drone to user until face has been detected a certein number of times    
         frame = tello.get_frame_read()
         img = frame.frame
-        img, info = find_face(img)
+        # img = cv.resize(img, (w, h))
+        img, info = check_camera(tello)
         # Display output window showing the drone's camera frames
         cv.imshow("Output", img)
         cv.waitKey(1)
@@ -44,7 +47,7 @@ if __name__ == "__main__":
 
     # Set height of drone to match height of person's face to track
     drone = mov.movement(tello=tello)
-    info = check_camera(drone.get_drone())  
+    info = check_camera(drone.get_drone())[1] 
     for i in range(3):
         found = trackObject(drone, info, [drone.get_x_location(), drone.get_y_location(), drone.get_angle()]) 
         print(f'>>>>>>>>>> found: {found}')
