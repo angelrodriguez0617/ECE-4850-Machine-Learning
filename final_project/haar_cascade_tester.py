@@ -47,7 +47,7 @@ if __name__ == "__main__":
     info = check_camera(drone.get_drone())  
     for i in range(3):
         found = trackObject(drone, info, [drone.get_x_location(), drone.get_y_location(), drone.get_angle()]) 
-        print(f'>>>>>>>>>> found: ')
+        print(f'>>>>>>>>>> found: {found}')
 
     
 
