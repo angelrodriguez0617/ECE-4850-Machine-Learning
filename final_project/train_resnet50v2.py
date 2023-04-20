@@ -3,22 +3,24 @@ from contextlib import redirect_stdout
 from tensorflow import keras
 
 # Angel, Austin, Shekaramiz, Other_Person, Background
-num_output_classes = 5
+num_output_classes = 4
 # height
-img_n_size = 224
+img_n_size = 720
 # width
-img_m_size = 224
+img_m_size = 960
 # this describes how many times we want to feed the data in
 num_epochs = 30
 
 # these import our data as a 'tensorflow dataset' object
 # useful for managing input data
 training_dataset, validation_dataset = keras.preprocessing.image_dataset_from_directory(
-            directory=f"{dataset_location}/train",
+            directory=f"/storage/ml/dataset/ECE4850-Faces",
             label_mode='categorical',
             color_mode='rgb',
+            batch_size=4,
             image_size=(img_n_size, img_m_size),
-            validation_split=0.7,
+            validation_split=0.3,
+            seed=35,
             subset='both'
 )
 
@@ -29,12 +31,12 @@ os.makedirs(save_directory, exist_ok=True)
 # this one saves the model any time it reaches its best performance
 save_model = keras.callbacks.ModelCheckpoint(
             save_directory,
-            monitor='val_accuracy',
-            mode='max',
+            monitor='val_loss',
+            mode='auto',
             save_best_only=True)
 
 # this imports the built in ResNet50V2 model
-base_model = keras.applications.resnet50v2.ResNet50V2(include_top=False, weights='imagenet', input_shape=(img_n_size, img_m_size, 3))
+base_model = keras.applications.ResNet50V2(include_top=False, weights=None, input_shape=(img_n_size, img_m_size, 3))
 
 # get the output of the ResNet50V2 model
 output = base_model.output
