@@ -7,7 +7,7 @@ import random
 # import time
 from sklearn.model_selection import train_test_split
 from sklearn.svm import SVC
-dir = r'C:\Users\10801309\OneDrive - Utah Valley University\Desktop\ECE 4850\ECE-4850\Lectures_17-18_Classification_SVM\train'
+dir = r'C:\Users\10801309\OneDrive - Utah Valley University\Desktop\ECE_4850_Machine_Learning\Dataset.zip\Dataset\train'
 
 categories = ['Cat','Dog']
 
