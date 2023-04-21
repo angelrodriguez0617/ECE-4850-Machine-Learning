@@ -7,7 +7,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.svm import SVC
 import joblib
 
-dir = r'/storage/ml/dataset/test_face2'
+dir = r'/storage/ml/dataset/test_face'
 
 categories = ['Angel', 'Austin', 'Other', 'Shekaramiz']
 
@@ -49,12 +49,12 @@ for feature, label in data:
     features.append(feature)
     labels.append(label)
 
-xtrain, xtest, ytrain, ytest = train_test_split(features, labels, test_size=0.3, random_state=35)
+# xtrain, xtest, ytrain, ytest = train_test_split(features, labels, test_size=0.3, random_state=35)
 
 save_directory = r'../svm_models'
-model_name = r'svm_epoch_2.pickle'
+model_name = r'svm_epoch_9.pickle'
 
 model = joblib.load(f'{save_directory}/{model_name}')
 
-accuracy = model.score(xtest, ytest)
+accuracy = model.score(features, labels)
 print(f'Loaded model accuracy: {accuracy}')

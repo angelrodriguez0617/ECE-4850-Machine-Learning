@@ -49,7 +49,7 @@ save_directory = r'../svm_models'
 os.makedirs(save_directory, exist_ok=True)
 
 # train for ten epocs
-for i in range(3):
+for i in range(10):
     print(f'Starting epoch {i}')
 
     # shuffle the data
