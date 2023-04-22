@@ -139,8 +139,9 @@ def trackObject(drone, info, starting_location, flag_rotate=0, flag_shift=0, fla
             return target_found
 
         if area > fbRange[0] and area < fbRange[1] and img_pass == 0:
-            # The drone has approached the target and will stay put
-            print(">>>>>>>>>> DRONE WILL STAY PUT")
+            # The drone has approached the target and will return as it has centered the object
+            print(">>>>>>>>>> EXITING TRACKOJBECT ON LINE 143")
+            camera.flip('f')
             return target_found
 
         elif area > fbRange[1] and img_pass == 0:
