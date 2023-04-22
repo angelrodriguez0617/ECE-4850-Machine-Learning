@@ -25,7 +25,7 @@ training_dataset, validation_dataset = keras.preprocessing.image_dataset_from_di
 )
 
 # make sure we have a directory to save the model we will create
-save_directory = r'../resnet50v2_model'
+save_directory = r'../vgg19_model'
 os.makedirs(save_directory, exist_ok=True)
 # this is a callback: callbacks tell keras to do something while training
 # this one saves the model any time it reaches its best performance
@@ -35,25 +35,27 @@ save_model = keras.callbacks.ModelCheckpoint(
             mode='auto',
             save_best_only=True)
 
-tensorboard_callback = keras.callbacks.TensorBoard(log_dir="../resnet50v2_tensorboard")
+tensorboard_callback = keras.callbacks.TensorBoard(log_dir="../vgg19_tensorboard")
 
-# this imports the built in ResNet50V2 model
-base_model = keras.applications.ResNet50V2(include_top=False, weights=None, input_shape=(img_n_size, img_m_size, 3))
+# this imports the built in VGG19 model
+base_model = keras.applications.VGG19(include_top=False, weights=None, input_shape=(img_n_size, img_m_size, 3))
 
 inputs = keras.Input(shape=(img_n_size, img_m_size, 3))
-output = keras.applications.resnet_v2.preprocess_input(inputs)
-# get the output of the ResNet50V2 model
+output = keras.applications.vgg19.preprocess_input(inputs)
+# get the output of the VGG19 model
 output = base_model(output)
 # pooling (basically to convert our 4D output to a 2D output)
-output = keras.layers.GlobalAveragePooling2D()(output)
+output = keras.layers.GlobalMaxPooling2D()(output)
 output = keras.layers.Dropout(0.2)(output)
+output = keras.layers.Dense(4096, activation='relu')(output)
+output = keras.layers.Dense(4096, activation='relu')(output)
 # fully connected layer, one neuron for each of our outputs
 output = keras.layers.Dense(num_output_classes, activation='softmax')(output)
 
 # this defines the model by feeding it the begining and the end of the model
 model = keras.models.Model(inputs=inputs, outputs=output)
 # this basically finalizes our model, or makes it ready for training/usage
-model.compile(optimizer='Adam', metrics=['accuracy'], loss='categorical_crossentropy')
+model.compile(optimizer=keras.optimizers.Adam(learning_rate=0.0001), metrics=['accuracy'], loss='categorical_crossentropy')
 
 # this is the function that trains our model
 model.fit(
@@ -64,6 +66,6 @@ model.fit(
 )
 
 # this saves a summary of our model
-with open(r'../resnet50v2_model_summary.txt', 'w') as f:
+with open(r'../vgg19_model_summary.txt', 'w') as f:
     with redirect_stdout(f):
         model.summary()

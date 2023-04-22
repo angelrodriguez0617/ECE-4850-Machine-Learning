@@ -35,7 +35,7 @@ training_dataset, test_dataset = keras.preprocessing.image_dataset_from_director
 class_names = test_dataset.class_names
 
 # loads the saved model
-model = keras.saving.load_model(r'../resnet50v2_model')
+model = keras.saving.load_model(r'../vgg19_model')
 
 # run predictions and evaluate test dataset
 prediction = model.predict(test_dataset)
