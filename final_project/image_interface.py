@@ -65,22 +65,22 @@ def trackObject(drone, info, starting_location, flag_rotate=0, flag_shift=0, fla
     img_pass = 0    # Flag to determine if the drone is returning from a target to skip point distance calculations
 
     # How close to the drone are you comfortable with? 
-    x_distance_cutoff = 200
+    x_distance_cutoff = 150
 
     # object detected
     if(x != 0):
         # (Focal length of camera lense * Real-world width of object)/Width of object in pixels
         # About 22 cm correctly calculates the distance of my face, feel free to revise to work with you
         distance = int((650 * 18.5) / width) 
-        if distance < 100: # The drone is too close to face, move back
-            drone.move(back=20)
+        if distance < x_distance_cutoff: # The drone is too close to face, move back
+            drone.move(back=(x_distance_cutoff-distance))
 
         # print(f'y position: {y}')
-        if(0 < y <= 200): # The drone needs to move down to center the target
+        if(0 < y <= 240): # The drone needs to move down to center the target
             drone.move(down=20)
             # info = check_camera(camera)[1]
             # target_found = trackObject(drone, info, starting_location, flag_rotate,  flag_shift=20, flag_shift_direction="down")
-        elif (y >= 300): # The drone needs to move up to center the target
+        elif (y >= 340): # The drone needs to move up to center the target
             drone.move(up=20)
             # info = check_camera(camera)[1]
             # target_found = trackObject(drone, info, starting_location, flag_rotate,  flag_shift=20, flag_shift_direction="up")

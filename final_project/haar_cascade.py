@@ -19,9 +19,11 @@ def find_face(img):
 
     # Use Haar Cascades to detect objects using the built-in classifier tool
     cascade = cv.CascadeClassifier("haarcascade_frontalface_default.xml")
+    # eye_cascade = cv.CascadeClassifier('haarcascade_eye.xml')
 
     gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
     faces = cascade.detectMultiScale(gray, 1.2, 8)
+    # eyes = eye_cascade.detectMultiScale(gray, 1.2, 8)
 
     # Coordinates of center of bounding box
     faceListC = []
@@ -41,12 +43,18 @@ def find_face(img):
         area = w * h
         faceListC.append([centerX, centerY])
         faceListArea.append(area)
+
+        # eyes = eye_cascade.detectMultiScale(gray)
+        # for (ex, ey, ew, eh) in eyes:
+        #     cv.rectangle(img, (ex, ey), (ex + ew, ey + eh), (0, 255, 0), 2)
+
     if len(faceListArea) != 0:
         # if there is items in the area list, find the maximum value and return
         i = faceListArea.index(max(faceListArea))
         return img, [faceListC[i], faceListArea[i], w]
     else:
         return img, [[0, 0], 0, 0]
+    
 
 if __name__ == "__main__":
     drone = Tello()
