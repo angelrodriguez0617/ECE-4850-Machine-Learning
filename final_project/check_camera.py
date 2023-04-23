@@ -12,6 +12,7 @@ def check_camera(our_drone):
     frame = our_drone.get_frame_read()
     sleep(0.2)
     img = frame.frame
+    # Set live feed video window to specific size
     img = cv.resize(img, (w, h))
     img, info = hc.find_face(img)
     # return info

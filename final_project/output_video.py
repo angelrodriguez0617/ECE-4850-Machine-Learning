@@ -4,7 +4,7 @@ import cv2 as cv
 import haar_cascade as hc
 from qr_reader import droneReadQR
 import threading
-
+from check_camera import w,h
 class LiveFeed(threading.Thread):
     '''Multithreaded class for providing live video to the user.
     This uses 3 while loops to output either regular video, haar cascade detection,
@@ -21,6 +21,7 @@ class LiveFeed(threading.Thread):
             while not self.haar.is_set():
                 frame = self.drone.get_frame_read()
                 img = frame.frame
+                img = cv.resize(img, (w, h))
                 img, info = hc.find_face(img)
                 cv.imshow("Output", img)
                 cv.waitKey(1)
@@ -39,7 +40,9 @@ class LiveFeed(threading.Thread):
                     color = (0, 255, 0) # Green color in BGR
                     thickness = 2 # Line thickness of 2 px
                     img = cv.putText(img, QR, org, font, fontScale, color, thickness, cv.LINE_AA) # Using cv2.putText() method
-
+                    
+                # Set live feed video window to same size used for checking camera    
+                img = cv.resize(img, (w, h))
                 cv.imshow("Output", img)
                 cv.waitKey(1)
             frame = self.drone.get_frame_read()
