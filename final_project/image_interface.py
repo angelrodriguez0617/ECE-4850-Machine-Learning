@@ -13,11 +13,13 @@ import numpy
 import csv
 import time
 from djitellopy import Tello
+from haar_cascade import face_width
 
 fbRange = [62000,82000] # [32000, 52000] # preset parameter for detected image boundary size
 w, h = 720, 480         # display size of the screen
 location = [0, 0, 0, 0] # Initialized list of x, y and angle coordinates for the drone.
-
+# How close to the drone are you comfortable with? 
+x_distance_cutoff = 200
 
 def trackObject(drone, info, starting_location, flag_rotate=0, flag_shift=0, flag_shift_direction = "none"):
     '''Take the variable for the drone, the output array from calling findTurbine in haar_cascade.py, and the current drone x,y location and relative angle (initialized as [0, 0, 0]).
@@ -64,14 +66,11 @@ def trackObject(drone, info, starting_location, flag_rotate=0, flag_shift=0, fla
     width = info[2] # The width of the bounding box
     img_pass = 0    # Flag to determine if the drone is returning from a target to skip point distance calculations
 
-    # How close to the drone are you comfortable with? 
-    x_distance_cutoff = 200
-
     # object detected
     if(x != 0):
         # (Focal length of camera lense * Real-world width of object)/Width of object in pixels
         # About 22 cm correctly calculates the distance of my face, feel free to revise to work with you
-        distance = int((650 * 18.5) / width) 
+        distance = int((650 * face_width) / width) 
         if distance < x_distance_cutoff: # The drone is too close to face, move back
             drone.move(back=(x_distance_cutoff-distance))
 
@@ -87,7 +86,8 @@ def trackObject(drone, info, starting_location, flag_rotate=0, flag_shift=0, fla
 
         if(0 < x <= 340):
             # The drone needs to angle to the left to center the target.
-            new_angle = int(round(((360 - x) / 360) * 41.3))
+            # Originally 41.3
+            new_angle = int(round(((360 - x) / 360) * face_width))
 
             print("new_angle: " , new_angle)
             shift = numpy.abs(distance * numpy.sin(new_angle * numpy.pi/180))
@@ -113,7 +113,9 @@ def trackObject(drone, info, starting_location, flag_rotate=0, flag_shift=0, fla
 
         elif(x >= 380):
             # The drone needs to angle to the right to center the target.
-            new_angle = int(round(((x - 360) / 360) * 41.3))
+            # Originally 41.3
+            new_angle = int(round(((x - 360) / 360) * face_width))
+            
             target_angle = drone.get_angle()-new_angle
             if target_angle < 0: target_angle += 360
 

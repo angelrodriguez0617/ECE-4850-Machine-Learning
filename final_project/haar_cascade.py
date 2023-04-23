@@ -11,6 +11,8 @@ from check_camera import check_camera
 
 CWD = os.getcwd()
 # w, h = 720, 480         # display size of the screen
+# Face width value which produces accurate distance calculations
+face_width = 18.5
 
 def find_face(img):
     '''Take an input image and searches for the target object using an xml file. 
@@ -86,5 +88,5 @@ if __name__ == "__main__":
             # print('>>>>>>>>>> FACE DETECTED')
             # (Focal length of camera lense * Real-world width of object)/Width of object in pixels
             # About 22 cm correctly calculates the distance of my face, feel free to revise to work with you
-            distance = int((650 * 18.5) / width)
+            distance = int((650 * face_width) / width)
             print(f'distance: {distance}')
