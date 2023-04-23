@@ -48,7 +48,7 @@ if __name__ == "__main__":
     # Set height of drone to match height of person's face to track
     drone = mov.movement(tello=tello)
     info = check_camera(drone.get_drone())[1] 
-    for i in range(3):
+    for i in range(10):
         found = trackObject(drone, info, [drone.get_x_location(), drone.get_y_location(), drone.get_angle()]) 
         print(f'>>>>>>>>>> found: {found}')
 

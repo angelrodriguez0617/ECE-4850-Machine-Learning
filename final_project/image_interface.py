@@ -65,7 +65,7 @@ def trackObject(drone, info, starting_location, flag_rotate=0, flag_shift=0, fla
     img_pass = 0    # Flag to determine if the drone is returning from a target to skip point distance calculations
 
     # How close to the drone are you comfortable with? 
-    x_distance_cutoff = 150
+    x_distance_cutoff = 200
 
     # object detected
     if(x != 0):
