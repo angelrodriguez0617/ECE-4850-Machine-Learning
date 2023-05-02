@@ -46,7 +46,7 @@ def find_face(img):
         faceListC.append([centerX, centerY])
         faceListArea.append(area)
 
-        # eyes = eye_cascade.detectMultiScale(gray)
+        # eyes = eye_cascade.detectMultiScale(gray) 
         # for (ex, ey, ew, eh) in eyes:
         #     cv.rectangle(img, (ex, ey), (ex + ew, ey + eh), (0, 255, 0), 2)
 

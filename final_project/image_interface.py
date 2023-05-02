@@ -56,6 +56,7 @@ def trackObject(drone, info, starting_location, flag_rotate=0, flag_shift=0, fla
         trackObject(drone, info, starting_location, flag_shift)
     elif info[0][0] == 0: # Object not detected
         while info[0][0] == 0: # Going to keep rotating until a person is detected
+            print(f'in while loop on line 59')
             drone.move(cw=90)
             info = check_camera(camera)[1]
         # We break out of the while loop when an object is detected
@@ -75,11 +76,11 @@ def trackObject(drone, info, starting_location, flag_rotate=0, flag_shift=0, fla
             drone.move(back=(x_distance_cutoff-distance))
 
         # print(f'y position: {y}')
-        if(0 < y <= 240): # The drone needs to move down to center the target
+        if(0 < y <= 220): # The drone needs to move down to center the target
             drone.move(down=20)
             # info = check_camera(camera)[1]
             # target_found = trackObject(drone, info, starting_location, flag_rotate,  flag_shift=20, flag_shift_direction="down")
-        elif (y >= 340): # The drone needs to move up to center the target
+        elif (y >= 360): # The drone needs to move up to center the target
             drone.move(up=20)
             # info = check_camera(camera)[1]
             # target_found = trackObject(drone, info, starting_location, flag_rotate,  flag_shift=20, flag_shift_direction="up")

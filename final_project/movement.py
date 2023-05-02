@@ -119,6 +119,8 @@ class movement():
         down = round(down)
         right = round(right)
         left = round(left)
+        fwd = round(fwd)
+        back = round(back)
 
         # Angel - account for negative values
         if right < 0:
@@ -133,6 +135,12 @@ class movement():
         if down < 0:
             up = -down
             down = 0
+        if fwd < 0:
+            back = -fwd
+            fwd = 0
+        if back < 0:
+            fwd = -back
+            back = 0
 
         # Angel - account for small values which would be out of range
         if up < 10:
@@ -151,6 +159,14 @@ class movement():
             right = 0
         elif  10 <= right < 20:
             right = 20 
+        if fwd < 10:
+            fwd = 0
+        elif  10 <= fwd < 20:
+            fwd = 20
+        if back < 10:
+            back = 0
+        elif  10 <= back < 20:
+            back = 20  
             
         if up != 0:
             # increases drone altitude
