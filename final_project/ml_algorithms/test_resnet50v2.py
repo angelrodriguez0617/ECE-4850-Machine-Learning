@@ -8,29 +8,26 @@ img_n_size = 720
 img_m_size = 960
 
 # imports our 'test' dataset
-# test_dataset = keras.preprocessing.image_dataset_from_directory(
-#             directory=f"/storage/ml/dataset/test_face",
-#             labels='inferred',
-#             label_mode='categorical',
-#             color_mode='rgb',
-#             shuffle=False,
-#             batch_size=4,
-#             image_size=(img_n_size, img_m_size)
-# )
-
-# random_number = random.randrange(40)
-training_dataset, test_dataset = keras.preprocessing.image_dataset_from_directory(
-            directory=f"/storage/ml/dataset/ECE4850-Faces",
+test_dataset = keras.preprocessing.image_dataset_from_directory(
+            directory=f"/storage/ml/dataset/test_face",
             labels='inferred',
             label_mode='categorical',
             color_mode='rgb',
-            batch_size=4,
-            image_size=(img_n_size, img_m_size),
-            validation_split=0.3,
-            seed=35,
             shuffle=False,
-            subset='both'
+            batch_size=4,
+            image_size=(img_n_size, img_m_size)
 )
+
+# random_number = random.randrange(40)
+# test_dataset = keras.preprocessing.image_dataset_from_directory(
+#             directory=f"/storage/ml/dataset/ECE4850-Faces-Reduced-Split/Test",
+#             labels='inferred',
+#             label_mode='categorical',
+#             color_mode='rgb',
+#             batch_size=4,
+#             image_size=(img_n_size, img_m_size),
+#             shuffle=True
+# )
 
 class_names = test_dataset.class_names
 

@@ -9,7 +9,7 @@ import joblib
 
 dir = r'/storage/ml/dataset/test_face'
 
-categories = ['Angel', 'Austin', 'Other', 'Shekaramiz']
+categories = ['Positive', 'Negative']
 
 data = []
 
@@ -51,8 +51,8 @@ for feature, label in data:
 
 # xtrain, xtest, ytrain, ytest = train_test_split(features, labels, test_size=0.3, random_state=35)
 
-save_directory = r'../svm_models'
-model_name = r'svm_epoch_9.pickle'
+save_directory = r'../svm_models_rbf'
+model_name = r'svm_epoch_15.pickle'
 
 model = joblib.load(f'{save_directory}/{model_name}')
 
