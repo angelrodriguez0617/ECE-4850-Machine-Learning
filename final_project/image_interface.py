@@ -87,7 +87,7 @@ def trackObject(drone, info, starting_location, flag_rotate=0, flag_shift=0, fla
 
         if(0 < x <= 340):
             # The drone needs to angle to the left to center the target.
-            # Originally 41.3, The drone has an onboard 720p camera and an 82.6° field of view
+            # Originally 41.3, the drone has an onboard 720p camera and an 82.6° field of view
             new_angle = int(round(((360 - x) / 360) * face_width))
 
             print("new_angle: " , new_angle)
@@ -114,7 +114,7 @@ def trackObject(drone, info, starting_location, flag_rotate=0, flag_shift=0, fla
 
         elif(x >= 380):
             # The drone needs to angle to the right to center the target.
-            # Originally 41.3, The drone has an onboard 720p camera and an 82.6° field of view
+            # Originally 41.3, the drone has an onboard 720p camera and an 82.6° field of view
             new_angle = int(round(((x - 360) / 360) * face_width))
             
             target_angle = drone.get_angle()-new_angle

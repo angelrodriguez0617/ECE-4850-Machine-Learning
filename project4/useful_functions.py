@@ -117,19 +117,20 @@ class DrawTwoDataset:
         ax = self.fig.add_subplot()
         data_class0 = self.data0[:, self.data0[3]<self.data0[2]]
         data_class1 = self.data0[:, self.data0[3]>self.data0[2]]
-        # Plot test data for class 0 and class 1
-        ax.plot(xtest0[0,:], xtest0[1,:], 'g.', label='Class 0 Test', markersize=1)
-        ax.plot(xtest1[0,:], xtest1[1,:], 'r.', label='Class 1 Test', markersize=1)
-        # End of Angel's edit
 
-        ax.scatter(data_class0[0], data_class0[1], marker=self.marker00, color=self.color00, label=self.legend00)
-        ax.scatter(data_class1[0], data_class1[1], marker=self.marker01, color=self.color01, label=self.legend01)
+        # Plot test data for class 0 and class 1
+        # ax.plot(xtest0[0,:], xtest0[1,:], 'g.', label='Class 0 Test', markersize=1)
+        # ax.plot(xtest1[0,:], xtest1[1,:], 'r.', label='Class 1 Test', markersize=1)
+        # End of Angel's edit
 
         sample_class0 = self.data1[:, self.data1[3]<self.data1[2]]
         sample_class1 = self.data1[:, self.data1[3]>self.data1[2]]
         ax.scatter(sample_class0[0], sample_class0[1], marker=self.marker10, color=self.color10, label=self.legend10)
         ax.scatter(sample_class1[0], sample_class1[1], marker=self.marker11, color=self.color11, label=self.legend11)
         
+        ax.scatter(data_class0[0], data_class0[1], marker=self.marker00, color=self.color00, label=self.legend00)
+        ax.scatter(data_class1[0], data_class1[1], marker=self.marker01, color=self.color01, label=self.legend01)
+
         ax.set_xlabel('X0')
         ax.set_ylabel('X1')
         ax.legend()
