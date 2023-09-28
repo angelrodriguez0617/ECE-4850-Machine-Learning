@@ -29,6 +29,13 @@ def total_energy(x,y,iter):
     total_energy += energy
     return total_energy
 
+def swap(iter):
+    rand_int = random.randrange(0, iterator.size - 2)
+    new_iter = iter
+    new_iter[rand_int], new_iter[rand_int-1] = new_iter[rand_int-1], new_iter[rand_int]
+    return new_iter
+
+
 energy_list = np.array([])
 energy_list = np.append(energy_list, total_energy(xpos,ypos,iterator))
 
@@ -48,66 +55,54 @@ ax.clear()
 
 # We will use this to graph the minimum path later
 best_iterator = copy.deepcopy(iterator)
-array_size = xpos.size
-T = 1 * array_size
-T_stop = 1
-T_decimation = 0.99 
-T_list = np.array([])
-T_list = np.append(T_list, T)
-while np.amin(energy_list) > 500: # Lets always get an energy value in the 400s
-    while T > T_stop:
-        for i in range(30 * array_size):        
-            # Swap random neighbors in iterator
-            rand_int = random.randrange(0, iterator.size - 2)
-            new_iter = iterator.copy()
-            new_iter[rand_int], new_iter[rand_int-1] = new_iter[rand_int-1], new_iter[rand_int]
+loop_counter = 1
+T = 10
+T_stop = 0.000001
+T_decimation = 0.99999 
+while T > T_stop:
+    loop_counter += 1
+    iterator = swap(iterator)
+    energy = total_energy(xpos,ypos, iterator)
 
-            energy = total_energy(xpos, ypos, new_iter)
-            if energy < np.amin(energy_list):
-                best_iterator = new_iter.copy()
+    # delta E = E_i - E_i-1 where E_i is current energy and E_i-1  is previous energy
+    # if delta E < 0, accept the current path
+    if energy < energy_list[-1]:
+        energy_list = np.append(energy_list, energy)
+        best_iterator = copy.deepcopy(iterator)
 
-            # delta E = E_i - E_i-1 where E_i is current energy and E_i-1  is previous energy
-            # if delta E < 0, accept the current path
-            if energy < energy_list[-1]:
-                energy_list = np.append(energy_list, energy)
-                iterator = new_iter.copy()
+    else: # else, accept current path if e^(-delta_E/T) > u
+        u = random.uniform(0, 1)
+        delta_E = energy - energy_list[-1]
+        if np.exp(-delta_E/T) > u: # accept path
+            energy_list = np.append(energy_list, energy)
+        else: # This is when we do not want to update the iterator/path
+            # Always update T
+            T *= T_decimation
+            continue
+    # Always update T
+    T *= T_decimation
+    print(f"Accepted energy: {energy_list[-1]}")
 
-            else: # else, accept current path if e^(-delta_E/T) > u
-                u = random.uniform(0, 1)
-                delta_E = energy - energy_list[-1]
-                if np.exp(-delta_E/T) > u: # accept path
-                    energy_list = np.append(energy_list, energy)
-                    iterator = new_iter.copy()
-                    T += 0.001                  
-
-        # Always update T
-        T *= T_decimation
-        T_list = np.append(T_list, T)
-        # print(f"Current accepted energy: {energy_list[-1]}")
-
-        # Plot 
-        # updating the values of x and y
-        xpath = np.append(np.append(xpos[0],xpos[iterator]),xpos[0])
-        ypath = np.append(np.append(ypos[0],ypos[iterator]),ypos[0])
-        line1.set_xdata(xpath)
-        line1.set_ydata(ypath)
-        ax.quiver(xpath[:-1], ypath[:-1], xpath[1:]-xpath[:-1], 
-                    ypath[1:]-ypath[:-1],scale_units='xy', angles='xy', scale=1, color='teal', width=0.005)
-        # re-drawing the figure
-        plt.title("Current Accepted Traveling Salesman Path")
-        for i, j in zip(xpath, ypath): # Writes the (x,y) coordinates above the coordinate location
-                plt.text(i-4, j+1, '({}, {})'.format(i, j), fontsize='small')
-        plt.text(60, 15, f'Energy: {int(energy)}', fontsize='medium', weight="bold")
-        format_T = "{:.3f}".format(T)
-        plt.text(60, 10, f'Temperature: {format_T}', fontsize='medium', weight="bold")
-        fig.canvas.draw()
-        # to flush the GUI events
-        fig.canvas.flush_events()
-        ax.clear()
-        time.sleep(0.1)
-    
-    # Restart temperature to get better result
-    T = T_list[0]
+    # Plot 
+    # updating the values of x and y
+    xpath = np.append(np.append(xpos[0],xpos[iterator]),xpos[0])
+    ypath = np.append(np.append(ypos[0],ypos[iterator]),ypos[0])
+    line1.set_xdata(xpath)
+    line1.set_ydata(ypath)
+    ax.quiver(xpath[:-1], ypath[:-1], xpath[1:]-xpath[:-1], 
+                   ypath[1:]-ypath[:-1],scale_units='xy', angles='xy', scale=1, color='teal', width=0.005)
+    # re-drawing the figure
+    plt.title("Traveling Salesman Path")
+    for i, j in zip(xpath, ypath): # Writes the (x,y) coordinates above the coordinate location
+            plt.text(i-4, j+1, '({}, {})'.format(i, j), fontsize='small')
+    plt.text(60, 15, f'Energy: {int(energy)}', fontsize='medium', weight="bold")
+    format_T = "{:.3f}".format(T)
+    plt.text(60, 10, f'Temperature: {format_T}', fontsize='medium', weight="bold")
+    fig.canvas.draw()
+    # to flush the GUI events
+    fig.canvas.flush_events()
+    ax.clear()
+    time.sleep(0.1)
 
 # print(f"original_iterator size: {original_iterator.size}\n{original_iterator}")
 # print(f"best_iterator size: {best_iterator.size}\n{best_iterator}")
@@ -120,15 +115,10 @@ plt.ioff()
 ax.remove()
 
 # Plot the energy decrease over time
-plt.subplot(2, 2, 3)
+plt.subplot(2, 1, 2)
 plt.plot(energy_list)
-plt.title(f"Energy of Chosen Paths (Lowest Energy = {int(np.amin(energy_list))})")
-
-# Plot the temperature decrease over time
-plt.subplot(2, 2, 4)
-plt.plot(T_list)
-format_T = "{:.3f}".format(T_list[-1])
-plt.title(f"Temperature Over Time (Starting = {T_list[0]}, Ending = {format_T})")
+plt.title("Energy of Chosen Paths")
+plt.text(0, 650, f'Lowest Energy Value: {int(np.amin(energy_list))}', fontsize='medium', weight="bold")
 
 # Plot the unoptimized path
 plt.subplot(2, 2, 1)
