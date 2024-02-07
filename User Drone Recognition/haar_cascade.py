@@ -3,10 +3,7 @@ By Angel Rodriguez and Austin Philips 2023'''
 
 import cv2 as cv
 import os
-import numpy as np
 from djitellopy import Tello
-import movement as mov
-import threading
 from check_camera import check_camera
 
 CWD = os.getcwd()
@@ -21,11 +18,11 @@ def find_face(img):
 
     # Use Haar Cascades to detect objects using the built-in classifier tool
     cascade = cv.CascadeClassifier("haarcascade_frontalface_default.xml")
-    # eye_cascade = cv.CascadeClassifier('haarcascade_eye.xml')
+    eye_cascade = cv.CascadeClassifier('haarcascade_eye.xml')
 
     gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
     faces = cascade.detectMultiScale(gray, 1.2, 8)
-    # eyes = eye_cascade.detectMultiScale(gray, 1.2, 8)
+    eyes = eye_cascade.detectMultiScale(gray, 1.2, 8)
 
     # Coordinates of center of bounding box
     faceListC = []
@@ -46,9 +43,9 @@ def find_face(img):
         faceListC.append([centerX, centerY])
         faceListArea.append(area)
 
-        # eyes = eye_cascade.detectMultiScale(gray) 
-        # for (ex, ey, ew, eh) in eyes:
-        #     cv.rectangle(img, (ex, ey), (ex + ew, ey + eh), (0, 255, 0), 2)
+        eyes = eye_cascade.detectMultiScale(gray) 
+        for (ex, ey, ew, eh) in eyes:
+            cv.rectangle(img, (ex, ey), (ex + ew, ey + eh), (0, 255, 0), 2)
 
     if len(faceListArea) != 0:
         # if there is items in the area list, find the maximum value and return
@@ -82,11 +79,11 @@ if __name__ == "__main__":
 
         x, y = info[0]  # The x and y location of the center of the bounding box in the frame
         area = info[1]  # The area of the bounding box
-        width = info[2] # The width of the bounding box
+        width = info[2] # The width of the bounding box 
 
         if info[0][0]: # Face detected
-            # print('>>>>>>>>>> FACE DETECTED')
+            print('>>>>>>>>>> FACE DETECTED')
             # (Focal length of camera lense * Real-world width of object)/Width of object in pixels
             # About 22 cm correctly calculates the distance of my face, feel free to revise to work with you
-            distance = int((650 * face_width) / width)
-            print(f'distance: {distance}')
+            # distance = int((650 * face_width) / width)
+            # print(f'distance: {distance}')
