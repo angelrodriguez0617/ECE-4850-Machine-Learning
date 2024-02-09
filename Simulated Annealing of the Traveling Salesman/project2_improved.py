@@ -98,7 +98,7 @@ def main():
         #test_list = current_lowest
         temperature = 100
         print(current_lowest)
-        if current_lowest[0] < 408:
+        if current_lowest[0] <= 420:
             break
         
 
